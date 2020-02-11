@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.freddyyj</groupId>
   <artifactId>DialogFlowPlugin</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
   <name>Dialogflow Plugin</name>
   <description>Google DialogFlow plugin for Minecraft craftbukkit plugin</description>
   <build>
@@ -15,6 +15,15 @@
                 <target>13</target>
             </configuration>
   		</plugin>
+  		    <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+            <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+        </configuration>
+    </plugin>
+  		
   	</plugins>
   </build>
   <repositories>

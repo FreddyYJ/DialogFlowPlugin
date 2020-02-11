@@ -1,0 +1,3 @@
+name: DialogFlowPlugin
+main: com.github.freddyyj.dialogflow.Core
+version: 0.0.1
