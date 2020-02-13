@@ -1,12 +1,13 @@
 package com.github.freddyyj.dialogflow;
 
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Core extends JavaPlugin{
 	private DialogFlow dialogFlow;
 	@Override
 	public void onEnable() {
-		// TODO Create plugin start method
 		dialogFlow=new DialogFlow(this);
 		
 		getLogger().info("DialogFlowPlugin Enabled!: "+dialogFlow.getKey().getProjectId()+", "+dialogFlow.getKey().getPrivateKey());
@@ -14,9 +15,19 @@ public class Core extends JavaPlugin{
 	}
 	@Override
 	public void onDisable() {
-		// TODO Create plugin stop method
 		getLogger().info("DialogFlowPlugin Disabled!");
+		dialogFlow.closeClient();
 		
 		super.onDisable();
+	}
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		if (args[0].equals("df") || args[0].equals("dialogflow")) {
+			if (args[1].equals("start")) {
+				dialogFlow.createSession(sender);
+				return true;
+			}
+		}
+		return super.onCommand(sender, command, label, args);
 	}
 }
