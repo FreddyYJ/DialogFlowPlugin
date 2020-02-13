@@ -2,6 +2,7 @@ package com.github.freddyyj.dialogflow;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Core extends JavaPlugin{
@@ -22,12 +23,19 @@ public class Core extends JavaPlugin{
 	}
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (args[0].equals("df") || args[0].equals("dialogflow")) {
-			if (args[1].equals("start")) {
-				dialogFlow.createSession(sender);
-				return true;
-			}
+		if (args[0].equals("start") && sender instanceof Player) {
+			Player player=(Player) sender;
+			dialogFlow.createSession(player);
+			player.sendMessage("Player added to session");
+			return true;
 		}
-		return super.onCommand(sender, command, label, args);
+		else if (args[0].equals("send") && sender instanceof Player) {
+			Player player=(Player) sender;
+			dialogFlow.createSession(player);
+			String response=dialogFlow.sendMessage(player, args[1]).getQueryResult().getFulfillmentText();
+			player.sendMessage(response);
+			return true;
+		}
+		return false;
 	}
 }
