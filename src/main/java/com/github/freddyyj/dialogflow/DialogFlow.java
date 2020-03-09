@@ -7,8 +7,11 @@ import java.util.HashMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.google.cloud.dialogflow.v2.Agent;
+import com.google.cloud.dialogflow.v2.AgentsClient;
 import com.google.cloud.dialogflow.v2.DetectIntentRequest;
 import com.google.cloud.dialogflow.v2.DetectIntentResponse;
+import com.google.cloud.dialogflow.v2.ProjectName;
 import com.google.cloud.dialogflow.v2.QueryInput;
 import com.google.cloud.dialogflow.v2.SessionName;
 import com.google.cloud.dialogflow.v2.SessionsClient;
@@ -20,6 +23,8 @@ public class DialogFlow {
 	private SessionsClient sessionsClient;
 	private Key key;
 	private Core core;
+	private Agent agent;
+	private AgentsClient client;
 	DialogFlow(Core core) {
 		this.core=core;
 		reloadKey();
@@ -32,6 +37,16 @@ public class DialogFlow {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		try {
+			client=AgentsClient.create();
+			ProjectName name=ProjectName.newBuilder().setProject(key.getProjectId()).build();
+			agent=client.getAgent(name);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	public void reloadKey() {
 		key=new Key(core);
@@ -42,16 +57,35 @@ public class DialogFlow {
 	}
 	public void closeClient() {
 		sessionsClient.close();
+		client.shutdown();
 	}
 	public DetectIntentResponse sendMessage(Player player,String message) {
+		return sendMessage(player, message, getDefaultLanguageCode());
+	}
+	public DetectIntentResponse sendMessage(Player player,String message,String languageCode) {
 		SessionName session=clientList.get(player.getName());
 		QueryInput.Builder input=QueryInput.newBuilder();
 		TextInput.Builder textBuilder=TextInput.newBuilder();
 		textBuilder.setText(message);
-		textBuilder.setLanguageCode("ko-KR");
+		textBuilder.setLanguageCode(languageCode);
 		input.setText(textBuilder);
 		QueryInput query=input.build();
 		
 		return sessionsClient.detectIntent(session, query);
+
 	}
+	public String getDefaultLanguageCode() {
+		return agent.getDefaultLanguageCode();
+	}
+	public java.util.List<String> getLanguageCodes(){
+		int count=agent.getSupportedLanguageCodesCount();
+		ArrayList<String> codeList=new ArrayList<>();
+		
+		codeList.add(getDefaultLanguageCode());
+		for (int i=0;i<count;i++) {
+			codeList.add(agent.getSupportedLanguageCodes(i));
+		}
+		return codeList;
+	}
+	public int getLanguageCodeCount() {return agent.getSupportedLanguageCodesCount()+1;}
 }

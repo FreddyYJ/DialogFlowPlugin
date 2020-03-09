@@ -32,8 +32,29 @@ public class Core extends JavaPlugin{
 		else if (args[0].equals("send") && sender instanceof Player) {
 			Player player=(Player) sender;
 			dialogFlow.createSession(player);
-			String response=dialogFlow.sendMessage(player, args[1]).getQueryResult().getFulfillmentText();
+			String response;
+			if (args.length==3)
+			{
+				response=dialogFlow.sendMessage(player, args[1],args[2]).getQueryResult().getFulfillmentText();
+
+			}
+			else {
+				response=dialogFlow.sendMessage(player, args[1]).getQueryResult().getFulfillmentText();
+
+			}
 			player.sendMessage(response);
+			return true;
+		}
+		else if (args[0].equals("language")) {
+			sender.sendMessage("Language List for this Agent:");
+			java.util.List<String> list=dialogFlow.getLanguageCodes();
+			for (int i=0;i<list.size();i++) {
+				sender.sendMessage(list.get(i));
+			}
+			return true;
+		}
+		else if (args[0].equals("count")) {
+			sender.sendMessage("Count of language of this Agent: "+dialogFlow.getLanguageCodeCount());
 			return true;
 		}
 		return false;
