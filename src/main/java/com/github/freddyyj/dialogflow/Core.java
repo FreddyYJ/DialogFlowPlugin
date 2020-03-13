@@ -32,17 +32,13 @@ public class Core extends JavaPlugin{
 		else if (args[0].equals("send") && sender instanceof Player) {
 			Player player=(Player) sender;
 			dialogFlow.createSession(player);
-			String response;
 			if (args.length==3)
 			{
-				response=dialogFlow.sendMessage(player, args[1],args[2]).getQueryResult().getFulfillmentText();
-
+				dialogFlow.sendMessage(player, args[1],args[2]).getQueryResult().getFulfillmentText();
 			}
 			else {
-				response=dialogFlow.sendMessage(player, args[1]).getQueryResult().getFulfillmentText();
-
+				dialogFlow.sendMessage(player, args[1]).getQueryResult().getFulfillmentText();
 			}
-			player.sendMessage(response);
 			return true;
 		}
 		else if (args[0].equals("language")) {
