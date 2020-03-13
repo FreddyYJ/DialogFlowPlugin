@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.github.freddyyj.dialogflow.event.MessageRequestEvent;
+import com.github.freddyyj.dialogflow.event.MessageResponseEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -59,10 +62,10 @@ public class DialogFlow {
 		sessionsClient.close();
 		client.shutdown();
 	}
-	public DetectIntentResponse sendMessage(Player player,String message) {
-		return sendMessage(player, message, getDefaultLanguageCode());
+	public void sendMessage(Player player,String message) {
+		sendMessage(player, message, getDefaultLanguageCode());
 	}
-	public DetectIntentResponse sendMessage(Player player,String message,String languageCode) {
+	public void sendMessage(Player player,String message,String languageCode) {
 		SessionName session=clientList.get(player.getName());
 		QueryInput.Builder input=QueryInput.newBuilder();
 		TextInput.Builder textBuilder=TextInput.newBuilder();
@@ -70,9 +73,18 @@ public class DialogFlow {
 		textBuilder.setLanguageCode(languageCode);
 		input.setText(textBuilder);
 		QueryInput query=input.build();
-		
-		return sessionsClient.detectIntent(session, query);
 
+		DetectIntentRequest.Builder request=DetectIntentRequest.newBuilder();
+		request.setQueryInput(query);
+		request.setSession(player.getName());
+
+		MessageRequestEvent requestEvent=new MessageRequestEvent(player,request.build());
+		Bukkit.getServer().getPluginManager().callEvent(requestEvent);
+
+		DetectIntentResponse response=sessionsClient.detectIntent(session, query);
+
+		MessageResponseEvent responseEvent=new MessageResponseEvent(player,response);
+		Bukkit.getServer().getPluginManager().callEvent(responseEvent);
 	}
 	public String getDefaultLanguageCode() {
 		return agent.getDefaultLanguageCode();
