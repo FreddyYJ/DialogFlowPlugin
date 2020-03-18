@@ -22,7 +22,7 @@ import com.google.cloud.dialogflow.v2.TextInput;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 public class DialogFlow {
-	private HashMap<String,SessionName> clientList;
+	private static ArrayList<Player> chattingPlayerList;
 	private SessionsClient sessionsClient;
 	private Key key;
 	private Core core;
@@ -32,8 +32,7 @@ public class DialogFlow {
 		this.core=core;
 		reloadKey();
 		
-		clientList=new HashMap<>();
-		
+
 		try {
 			sessionsClient=SessionsClient.create();
 		} catch (IOException e) {
@@ -49,24 +48,31 @@ public class DialogFlow {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		chattingPlayerList=new ArrayList<>();
 	}
 	public void reloadKey() {
 		key=new Key(core);
 	}
 	Key getKey() {return key;}
-	public void createSession(Player player) {
-		clientList.put(player.getName(),SessionName.of(key.getProjectId(), player.getName()));
-	}
 	public void closeClient() {
 		sessionsClient.close();
 		client.shutdown();
+	}
+	public void startChatting(Player player){
+		// TODO Add Exception for already chatting player
+		chattingPlayerList.add(player);
+	}
+	public boolean isPlayerChatting(Player player){
+		return chattingPlayerList.contains(player);
+	}
+	public void stopChatting(Player player){
+		// TODO Add EXception for already finish chatting
+		chattingPlayerList.remove(player);
 	}
 	public void sendMessage(Player player,String message) {
 		sendMessage(player, message, getDefaultLanguageCode());
 	}
 	public void sendMessage(Player player,String message,String languageCode) {
-		SessionName session=clientList.get(player.getName());
 		QueryInput.Builder input=QueryInput.newBuilder();
 		TextInput.Builder textBuilder=TextInput.newBuilder();
 		textBuilder.setText(message);
@@ -81,7 +87,7 @@ public class DialogFlow {
 		MessageRequestEvent requestEvent=new MessageRequestEvent(player,request.build());
 		Bukkit.getServer().getPluginManager().callEvent(requestEvent);
 
-		DetectIntentResponse response=sessionsClient.detectIntent(session, query);
+		DetectIntentResponse response=sessionsClient.detectIntent(request.build());
 
 		MessageResponseEvent responseEvent=new MessageResponseEvent(player,response);
 		Bukkit.getServer().getPluginManager().callEvent(responseEvent);

@@ -31,13 +31,11 @@ public final class Core extends JavaPlugin implements Listener {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (args[0].equals("start") && sender instanceof Player) {
 			Player player=(Player) sender;
-			dialogFlow.createSession(player);
 			player.sendMessage("Player added to session");
 			return true;
 		}
 		else if (args[0].equals("send") && sender instanceof Player) {
 			Player player=(Player) sender;
-			dialogFlow.createSession(player);
 			if (args.length==3)
 			{
 				dialogFlow.sendMessage(player, args[1],args[2]);

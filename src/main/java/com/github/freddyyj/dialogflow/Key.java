@@ -33,7 +33,7 @@ public class Key {
 			clientEmail=object.getString("client_email");
 
 		} catch (FileNotFoundException e) {
-			// TODO Create catch block
+			// TODO Throw exception for no key file
 			e.printStackTrace();
 		}
 	}
