@@ -10,9 +10,14 @@ public class MessageResponseEvent extends Event {
     private Player sender;
     private DetectIntentResponse response;
     public MessageResponseEvent(Player sender, DetectIntentResponse response){
+        this(sender,response,false);
+    }
+    public MessageResponseEvent(Player sender, DetectIntentResponse response,boolean isAsync){
+        super(isAsync);
         this.sender=sender;
         this.response=response;
     }
+
     @Override
     public HandlerList getHandlers() {
         return handlerList;

@@ -20,6 +20,10 @@ import com.google.cloud.dialogflow.v2.SessionName;
 import com.google.cloud.dialogflow.v2.SessionsClient;
 import com.google.cloud.dialogflow.v2.TextInput;
 import com.google.protobuf.InvalidProtocolBufferException;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class DialogFlow {
 	private static ArrayList<Player> chattingPlayerList;
@@ -31,7 +35,6 @@ public class DialogFlow {
 	DialogFlow(Core core) {
 		this.core=core;
 		reloadKey();
-		
 
 		try {
 			sessionsClient=SessionsClient.create();
@@ -49,6 +52,7 @@ public class DialogFlow {
 			e.printStackTrace();
 		}
 		chattingPlayerList=new ArrayList<>();
+		Bukkit.getPluginManager().registerEvents(new ChattingListener(),core);
 	}
 	public void reloadKey() {
 		key=new Key(core);
@@ -66,13 +70,13 @@ public class DialogFlow {
 		return chattingPlayerList.contains(player);
 	}
 	public void stopChatting(Player player){
-		// TODO Add EXception for already finish chatting
+		// TODO Add Exception for already finish chatting
 		chattingPlayerList.remove(player);
 	}
-	public void sendMessage(Player player,String message) {
-		sendMessage(player, message, getDefaultLanguageCode());
+	public void sendMessage(Player player,String message,boolean isAsync) {
+		sendMessage(player, message, getDefaultLanguageCode(),isAsync);
 	}
-	public void sendMessage(Player player,String message,String languageCode) {
+	public void sendMessage(Player player,String message,String languageCode,boolean isAsync) {
 		QueryInput.Builder input=QueryInput.newBuilder();
 		TextInput.Builder textBuilder=TextInput.newBuilder();
 		textBuilder.setText(message);
@@ -80,16 +84,16 @@ public class DialogFlow {
 		input.setText(textBuilder);
 		QueryInput query=input.build();
 
-		DetectIntentRequest.Builder request=DetectIntentRequest.newBuilder();
-		request.setQueryInput(query);
-		request.setSession(player.getName());
+		SessionName.Builder sessionBuilder=SessionName.newBuilder();
+		sessionBuilder.setProject(key.getProjectId());
+		sessionBuilder.setSession(player.getName());
 
-		MessageRequestEvent requestEvent=new MessageRequestEvent(player,request.build());
+		MessageRequestEvent requestEvent=new MessageRequestEvent(player,sessionBuilder.build(),query,isAsync);
 		Bukkit.getServer().getPluginManager().callEvent(requestEvent);
 
-		DetectIntentResponse response=sessionsClient.detectIntent(request.build());
+		DetectIntentResponse response=sessionsClient.detectIntent(sessionBuilder.build(),query);
 
-		MessageResponseEvent responseEvent=new MessageResponseEvent(player,response);
+		MessageResponseEvent responseEvent=new MessageResponseEvent(player,response,isAsync);
 		Bukkit.getServer().getPluginManager().callEvent(responseEvent);
 	}
 	public String getDefaultLanguageCode() {
@@ -106,4 +110,15 @@ public class DialogFlow {
 		return codeList;
 	}
 	public int getLanguageCodeCount() {return agent.getSupportedLanguageCodesCount()+1;}
+
+	class ChattingListener implements Listener {
+		@EventHandler
+		public void onAsyncPlayerChat(AsyncPlayerChatEvent event){
+			Player player=event.getPlayer();
+			String msg=event.getMessage();
+			if (isPlayerChatting(player)) {
+				sendMessage(player, msg,true);
+			}
+		}
+	}
 }

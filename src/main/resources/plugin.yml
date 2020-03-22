@@ -9,3 +9,12 @@ commands:
     dialogflow:
         usage: "/dialogflow [Command]"
         description: Default command.
+    start:
+        usage: "/df start"
+        description: Start chatting with DialogFlow.
+    dfstop:
+        usage: "/df stop"
+        description: Stop chatting with DialogFlow.
+    send:
+        usage: "/df send <Message> [LanguageCode]"
+        description: Send message with language code to DialogFlow.
