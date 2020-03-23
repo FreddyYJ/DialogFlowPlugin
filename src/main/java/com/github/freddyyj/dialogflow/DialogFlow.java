@@ -3,6 +3,7 @@ package com.github.freddyyj.dialogflow;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.github.freddyyj.dialogflow.event.MessageRequestEvent;
 import com.github.freddyyj.dialogflow.event.MessageResponseEvent;
@@ -26,7 +27,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class DialogFlow {
-	private static ArrayList<Player> chattingPlayerList;
+	private ArrayList<Player> chattingPlayerList;
 	private SessionsClient sessionsClient;
 	private Key key;
 	private Core core;
@@ -73,6 +74,7 @@ public class DialogFlow {
 		// TODO Add Exception for already finish chatting
 		chattingPlayerList.remove(player);
 	}
+	public List<Player> getPlayerChatting(){return chattingPlayerList;}
 	public void sendMessage(Player player,String message,boolean isAsync) {
 		sendMessage(player, message, getDefaultLanguageCode(),isAsync);
 	}
@@ -117,6 +119,7 @@ public class DialogFlow {
 			Player player=event.getPlayer();
 			String msg=event.getMessage();
 			if (isPlayerChatting(player)) {
+				event.setCancelled(true);
 				sendMessage(player, msg,true);
 			}
 		}

@@ -18,3 +18,9 @@ commands:
     send:
         usage: "/df send <Message> [LanguageCode]"
         description: Send message with language code to DialogFlow.
+    langlist:
+        usage: "/df language"
+        description: List of language of current Agent.
+    list:
+        usage: "/df list"
+        description: List of player who current chatting.

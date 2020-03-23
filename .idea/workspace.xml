@@ -5,17 +5,11 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/github/freddyyj/dialogflow/Core.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/freddyyj/dialogflow/Core.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/github/freddyyj/dialogflow/DialogFlow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/freddyyj/dialogflow/DialogFlow.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/github/freddyyj/dialogflow/event/MessageRequestEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/freddyyj/dialogflow/event/MessageRequestEvent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/github/freddyyj/dialogflow/event/MessageResponseEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/freddyyj/dialogflow/event/MessageResponseEvent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/DialogFlowPlugin-0.0.1-jar-with-dependencies.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/DialogFlowPlugin-0.0.1-jar-with-dependencies.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/DialogFlowPlugin-0.0.1.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/DialogFlowPlugin-0.0.1.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/github/freddyyj/dialogflow/Core.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/github/freddyyj/dialogflow/Core.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/github/freddyyj/dialogflow/DialogFlow.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/github/freddyyj/dialogflow/DialogFlow.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/github/freddyyj/dialogflow/event/MessageRequestEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/github/freddyyj/dialogflow/event/MessageRequestEvent.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/github/freddyyj/dialogflow/event/MessageResponseEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/github/freddyyj/dialogflow/event/MessageResponseEvent.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -169,30 +163,30 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="765" y="229" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1584852071378" />
-    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1584857798984">
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1584928881881">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1584857798984" />
-    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1584857798984">
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1584928881881" />
+    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1584928881880">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1584857798984" />
-    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1584857798984">
+    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1584928881880" />
+    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1584928881880">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1584857798984" />
-    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1584857798984">
+    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1584928881880" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1584928881881">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1584857798984" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1584928881881" />
     <state x="461" y="161" key="SettingsEditor" timestamp="1584086043837">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="461" y="161" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1584086043837" />
-    <state x="657" y="343" key="com.intellij.ide.util.TipDialog" timestamp="1584851838570">
+    <state x="657" y="343" key="com.intellij.ide.util.TipDialog" timestamp="1584928226017">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="657" y="343" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1584851838570" />
+    <state x="657" y="343" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1584928226017" />
     <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1584081813589">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

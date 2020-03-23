@@ -58,8 +58,11 @@ public final class Core extends JavaPlugin implements Listener {
 			}
 			return true;
 		}
-		else if (args[0].equals("count")) {
-			sender.sendMessage("Count of language of this Agent: "+dialogFlow.getLanguageCodeCount());
+		else if (args[0].equals("list")){
+			sender.sendMessage("Player list that current chatting:");
+			java.util.List<Player> list=dialogFlow.getPlayerChatting();
+			for (int i=0;i<list.size();i++)
+				sender.sendMessage(list.get(i).getName());
 			return true;
 		}
 		return false;
