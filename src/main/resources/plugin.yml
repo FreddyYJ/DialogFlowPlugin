@@ -11,26 +11,6 @@ commands:
         usage: "/dialogflow [Command]"
         description: Default command.
         permission: dialogflow.df
-    start:
-        usage: "/df start"
-        description: Start chatting with DialogFlow.
-        permission: dialogflow.chat
-    dfstop:
-        usage: "/df stop"
-        description: Stop chatting with DialogFlow.
-        permission: dialogflow.chat
-    send:
-        usage: "/df send <Message> [LanguageCode]"
-        description: Send message with language code to DialogFlow.
-        permission: dialogflow.send
-    langlist:
-        usage: "/df language"
-        description: List of language of current Agent.
-        permission: dialogflow.language
-    list:
-        usage: "/df list"
-        description: List of player who current chatting.
-        permission: dialogflow.list
 permissions:
     dialogflow.df:
         description: Allow to use default command.
