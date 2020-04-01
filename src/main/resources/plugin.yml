@@ -6,21 +6,44 @@ commands:
     df:
         usage: "/df [Command]"
         description: Default command for use this plugin.
+        permission: dialogflow.df
     dialogflow:
         usage: "/dialogflow [Command]"
         description: Default command.
+        permission: dialogflow.df
     start:
         usage: "/df start"
         description: Start chatting with DialogFlow.
+        permission: dialogflow.chat
     dfstop:
         usage: "/df stop"
         description: Stop chatting with DialogFlow.
+        permission: dialogflow.chat
     send:
         usage: "/df send <Message> [LanguageCode]"
         description: Send message with language code to DialogFlow.
+        permission: dialogflow.send
     langlist:
         usage: "/df language"
         description: List of language of current Agent.
+        permission: dialogflow.language
     list:
         usage: "/df list"
         description: List of player who current chatting.
+        permission: dialogflow.list
+permissions:
+    dialogflow.df:
+        description: Allow to use default command.
+        default: true
+    dialogflow.chat:
+        description: Allow to chat with DialogFlow.
+        default: true
+    dialogflow.send:
+        description: Allow to send request to DialogFlow.
+        default: true
+    dialogflow.language:
+        description: Allow to look language list for current Agent.
+        default: true
+    dialogflow.list:
+        description: Allow to look player list who current chatting.
+        default: op
