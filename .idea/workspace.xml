@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e82cd214-e4e5-495c-aea8-85281a0e1c52" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/github/freddyyj/dialogflow/Core.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/freddyyj/dialogflow/Core.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/github/freddyyj/dialogflow/event/MessageRequestEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/freddyyj/dialogflow/event/MessageRequestEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -182,6 +180,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="657" y="343" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1586259289887" />
+    <state x="616" y="240" key="run.anything.popup" timestamp="1586261869971">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="616" y="240" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1586261869971" />
     <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1584081813589">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
