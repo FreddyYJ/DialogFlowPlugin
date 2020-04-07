@@ -1,5 +1,6 @@
 package com.github.freddyyj.dialogflow;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +8,8 @@ import java.util.List;
 
 import com.github.freddyyj.dialogflow.event.MessageRequestEvent;
 import com.github.freddyyj.dialogflow.event.MessageResponseEvent;
+import com.github.freddyyj.dialogflow.exception.InvalidChatStartException;
+import com.github.freddyyj.dialogflow.exception.InvalidChatStopException;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -33,29 +36,19 @@ public class DialogFlow {
 	private Core core;
 	private Agent agent;
 	private AgentsClient client;
-	DialogFlow(Core core) {
+	DialogFlow(Core core) throws IOException {
 		this.core=core;
 		reloadKey();
 
-		try {
-			sessionsClient=SessionsClient.create();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		try {
-			client=AgentsClient.create();
-			ProjectName name=ProjectName.newBuilder().setProject(key.getProjectId()).build();
-			agent=client.getAgent(name);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		sessionsClient=SessionsClient.create();
+
+		client=AgentsClient.create();
+		ProjectName name=ProjectName.newBuilder().setProject(key.getProjectId()).build();
+		agent=client.getAgent(name);
 		chattingPlayerList=new ArrayList<>();
 		Bukkit.getPluginManager().registerEvents(new ChattingListener(),core);
 	}
-	public void reloadKey() {
+	public void reloadKey() throws FileNotFoundException {
 		key=new Key(core);
 	}
 	Key getKey() {return key;}
@@ -63,15 +56,15 @@ public class DialogFlow {
 		sessionsClient.close();
 		client.shutdown();
 	}
-	public void startChatting(Player player){
-		// TODO Add Exception for already chatting player
+	public void startChatting(Player player) throws InvalidChatStartException {
+		if (chattingPlayerList.contains(player)) throw new InvalidChatStartException("This player already added");
 		chattingPlayerList.add(player);
 	}
 	public boolean isPlayerChatting(Player player){
 		return chattingPlayerList.contains(player);
 	}
-	public void stopChatting(Player player){
-		// TODO Add Exception for already finish chatting
+	public void stopChatting(Player player) throws InvalidChatStopException {
+		if (!chattingPlayerList.contains(player)) throw new InvalidChatStopException("This player already removed");
 		chattingPlayerList.remove(player);
 	}
 	public List<Player> getPlayerChatting(){return chattingPlayerList;}

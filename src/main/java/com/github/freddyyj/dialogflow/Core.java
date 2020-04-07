@@ -1,5 +1,7 @@
 package com.github.freddyyj.dialogflow;
 
+import com.github.freddyyj.dialogflow.exception.InvalidChatStartException;
+import com.github.freddyyj.dialogflow.exception.InvalidChatStopException;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -10,11 +12,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.github.freddyyj.dialogflow.event.MessageResponseEvent;
 
+import java.io.IOException;
+
 public final class Core extends JavaPlugin implements Listener {
 	private DialogFlow dialogFlow;
 	@Override
 	public void onEnable() {
-		dialogFlow=new DialogFlow(this);
+		try {
+			dialogFlow=new DialogFlow(this);
+		} catch (IOException e) {
+			getLogger().warning("Plugin loading failed: "+e.getMessage());
+		}
 		Bukkit.getPluginManager().registerEvents(this,this);
 
 		getLogger().info("DialogFlowPlugin Enabled!: "+dialogFlow.getKey().getProjectId()+", "+dialogFlow.getKey().getPrivateKey());
@@ -31,12 +39,20 @@ public final class Core extends JavaPlugin implements Listener {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (args[0].equals("start") && sender instanceof Player && sender.hasPermission("dialogflow.chat")) {
 			Player player=(Player) sender;
-			dialogFlow.startChatting(player);
+			try {
+				dialogFlow.startChatting(player);
+			} catch (InvalidChatStartException e) {
+				player.sendMessage("This player is already chatting!");
+			}
 			return true;
 		}
 		else if (args[0].equals("stop") && sender instanceof Player && sender.hasPermission("dialogflow.chat")){
 			Player player=(Player) sender;
-			dialogFlow.stopChatting(player);
+			try {
+				dialogFlow.stopChatting(player);
+			} catch (InvalidChatStopException e) {
+				player.sendMessage("This player has stopped chatting!");
+			}
 			return true;
 		}
 		else if (args[0].equals("send") && sender instanceof Player && sender.hasPermission("dialogflow.send")) {

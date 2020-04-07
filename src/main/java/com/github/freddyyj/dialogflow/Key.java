@@ -15,27 +15,21 @@ public class Key {
 	private String privateKey;
 	private String clientEmail;
 	private static final String KEY_FILE="/key.json";
-	public Key(Core core) {
+	public Key(Core core) throws FileNotFoundException {
 		this.core=core;
 		
 		FileReader file=null;
-		try {
-			File keyFolder=new File(core.getDataFolder(),KEY_FILE);
-			file = new FileReader(keyFolder);
-			
-			JsonReader reader=Json.createReader(file);
-			JsonObject object=reader.readObject();
-			reader.close();
-			
-			projectID=object.getString("project_id");
-			privateKeyID=object.getString("private_key_id");
-			privateKey=object.getString("private_key");
-			clientEmail=object.getString("client_email");
+		File keyFolder=new File(core.getDataFolder(),KEY_FILE);
+		file = new FileReader(keyFolder);
 
-		} catch (FileNotFoundException e) {
-			// TODO Throw exception for no key file
-			e.printStackTrace();
-		}
+		JsonReader reader=Json.createReader(file);
+		JsonObject object=reader.readObject();
+		reader.close();
+
+		projectID=object.getString("project_id");
+		privateKeyID=object.getString("private_key_id");
+		privateKey=object.getString("private_key");
+		clientEmail=object.getString("client_email");
 	}
 	String getProjectId() {return projectID;}
 	String getPrivateKeyId() {return privateKeyID;}
