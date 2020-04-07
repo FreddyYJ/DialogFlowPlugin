@@ -3,5 +3,8 @@ This plugin is for using Dialogflow in Minecraft SpigotMC. It is compatible with
 Also, it has two custom event to add some work at send/receive messages. Default is send response message to sender.
 
 # Changelog
+ver 0.1.0
+* Release beta plugin, will have lots of bugs
+
 ver 0.0.1
 * Init Project
