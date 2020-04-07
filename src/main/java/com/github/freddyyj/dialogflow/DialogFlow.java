@@ -1,11 +1,15 @@
 package com.github.freddyyj.dialogflow;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.github.freddyyj.dialogflow.event.MessageRequestEvent;
 import com.github.freddyyj.dialogflow.event.MessageResponseEvent;
+import com.github.freddyyj.dialogflow.exception.InvalidChatStartException;
+import com.github.freddyyj.dialogflow.exception.InvalidChatStopException;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,53 +24,54 @@ import com.google.cloud.dialogflow.v2.SessionName;
 import com.google.cloud.dialogflow.v2.SessionsClient;
 import com.google.cloud.dialogflow.v2.TextInput;
 import com.google.protobuf.InvalidProtocolBufferException;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class DialogFlow {
-	private HashMap<String,SessionName> clientList;
+	private ArrayList<Player> chattingPlayerList;
 	private SessionsClient sessionsClient;
 	private Key key;
 	private Core core;
 	private Agent agent;
 	private AgentsClient client;
-	DialogFlow(Core core) {
+	DialogFlow(Core core) throws IOException {
 		this.core=core;
 		reloadKey();
-		
-		clientList=new HashMap<>();
-		
-		try {
-			sessionsClient=SessionsClient.create();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		try {
-			client=AgentsClient.create();
-			ProjectName name=ProjectName.newBuilder().setProject(key.getProjectId()).build();
-			agent=client.getAgent(name);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+
+		sessionsClient=SessionsClient.create();
+
+		client=AgentsClient.create();
+		ProjectName name=ProjectName.newBuilder().setProject(key.getProjectId()).build();
+		agent=client.getAgent(name);
+		chattingPlayerList=new ArrayList<>();
+		Bukkit.getPluginManager().registerEvents(new ChattingListener(),core);
 	}
-	public void reloadKey() {
+	public void reloadKey() throws FileNotFoundException {
 		key=new Key(core);
 	}
 	Key getKey() {return key;}
-	public void createSession(Player player) {
-		clientList.put(player.getName(),SessionName.of(key.getProjectId(), player.getName()));
-	}
 	public void closeClient() {
 		sessionsClient.close();
 		client.shutdown();
 	}
-	public void sendMessage(Player player,String message) {
-		sendMessage(player, message, getDefaultLanguageCode());
+	public void startChatting(Player player) throws InvalidChatStartException {
+		if (chattingPlayerList.contains(player)) throw new InvalidChatStartException("This player already added");
+		chattingPlayerList.add(player);
 	}
-	public void sendMessage(Player player,String message,String languageCode) {
-		SessionName session=clientList.get(player.getName());
+	public boolean isPlayerChatting(Player player){
+		return chattingPlayerList.contains(player);
+	}
+	public void stopChatting(Player player) throws InvalidChatStopException {
+		if (!chattingPlayerList.contains(player)) throw new InvalidChatStopException("This player already removed");
+		chattingPlayerList.remove(player);
+	}
+	public List<Player> getPlayerChatting(){return chattingPlayerList;}
+	public void sendMessage(Player player,String message,boolean isAsync) {
+		sendMessage(player, message, getDefaultLanguageCode(),isAsync);
+	}
+	public void sendMessage(Player player,String message,String languageCode,boolean isAsync) {
 		QueryInput.Builder input=QueryInput.newBuilder();
 		TextInput.Builder textBuilder=TextInput.newBuilder();
 		textBuilder.setText(message);
@@ -74,16 +79,16 @@ public class DialogFlow {
 		input.setText(textBuilder);
 		QueryInput query=input.build();
 
-		DetectIntentRequest.Builder request=DetectIntentRequest.newBuilder();
-		request.setQueryInput(query);
-		request.setSession(player.getName());
+		SessionName.Builder sessionBuilder=SessionName.newBuilder();
+		sessionBuilder.setProject(key.getProjectId());
+		sessionBuilder.setSession(player.getName());
 
-		MessageRequestEvent requestEvent=new MessageRequestEvent(player,request.build());
+		MessageRequestEvent requestEvent=new MessageRequestEvent(player,sessionBuilder.build(),query,isAsync);
 		Bukkit.getServer().getPluginManager().callEvent(requestEvent);
 
-		DetectIntentResponse response=sessionsClient.detectIntent(session, query);
+		DetectIntentResponse response=sessionsClient.detectIntent(sessionBuilder.build(),query);
 
-		MessageResponseEvent responseEvent=new MessageResponseEvent(player,response);
+		MessageResponseEvent responseEvent=new MessageResponseEvent(player,response,isAsync);
 		Bukkit.getServer().getPluginManager().callEvent(responseEvent);
 	}
 	public String getDefaultLanguageCode() {
@@ -100,4 +105,16 @@ public class DialogFlow {
 		return codeList;
 	}
 	public int getLanguageCodeCount() {return agent.getSupportedLanguageCodesCount()+1;}
+
+	class ChattingListener implements Listener {
+		@EventHandler
+		public void onAsyncPlayerChat(AsyncPlayerChatEvent event){
+			Player player=event.getPlayer();
+			String msg=event.getMessage();
+			if (isPlayerChatting(player)) {
+				event.setCancelled(true);
+				sendMessage(player, msg,true);
+			}
+		}
+	}
 }

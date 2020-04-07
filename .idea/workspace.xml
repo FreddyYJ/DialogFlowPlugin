@@ -2,17 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e82cd214-e4e5-495c-aea8-85281a0e1c52" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/github/freddyyj/dialogflow/Core.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/github/freddyyj/dialogflow/Core.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/DialogFlowPlugin-0.0.1-jar-with-dependencies.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/DialogFlowPlugin-0.0.1-jar-with-dependencies.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/DialogFlowPlugin-0.0.1.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/DialogFlowPlugin-0.0.1.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/github/freddyyj/dialogflow/Core.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/github/freddyyj/dialogflow/Core.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/github/freddyyj/dialogflow/DialogFlow.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/github/freddyyj/dialogflow/DialogFlow.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -162,34 +152,38 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="414" y="174" width="1092" height="780" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1584091237066" />
-    <state x="765" y="229" key="#com.intellij.ide.util.MemberChooser" timestamp="1584080698024">
+    <state x="765" y="229" key="#com.intellij.ide.util.MemberChooser" timestamp="1586261652634">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="765" y="229" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1584080698024" />
-    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1584091451642">
+    <state x="765" y="229" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1586261652634" />
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1586261712635">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1584091451642" />
-    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1584091451642">
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1586261712635" />
+    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1586261712635">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1584091451642" />
-    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1584091451641">
+    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1586261712635" />
+    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1586261712634">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1584091451641" />
-    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1584091451642">
+    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1586261712634" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1586261712635">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1584091451642" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1586261712635" />
     <state x="461" y="161" key="SettingsEditor" timestamp="1584086043837">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="461" y="161" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1584086043837" />
-    <state x="657" y="343" key="com.intellij.ide.util.TipDialog" timestamp="1584091211172">
+    <state x="657" y="343" key="com.intellij.ide.util.TipDialog" timestamp="1586259289887">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="657" y="343" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1584091211172" />
+    <state x="657" y="343" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1586259289887" />
+    <state x="616" y="240" key="run.anything.popup" timestamp="1586261869971">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="616" y="240" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1586261869971" />
     <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1584081813589">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
