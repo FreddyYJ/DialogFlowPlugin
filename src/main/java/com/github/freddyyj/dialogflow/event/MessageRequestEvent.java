@@ -4,10 +4,12 @@ import com.google.cloud.dialogflow.v2.DetectIntentRequest;
 import com.google.cloud.dialogflow.v2.QueryInput;
 import com.google.cloud.dialogflow.v2.SessionName;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class MessageRequestEvent extends Event {
+public class MessageRequestEvent extends Event implements Cancellable {
+    private boolean isCancelled=false;
     private static final HandlerList handlerList=new HandlerList();
     private Player sender;
     private SessionName sessionName;
@@ -31,4 +33,14 @@ public class MessageRequestEvent extends Event {
     public Player getSender(){return sender;}
     public SessionName getSessionName(){return sessionName;}
     public QueryInput getQueryInput(){return input;}
+
+    @Override
+    public boolean isCancelled() {
+        return isCancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancel) {
+        isCancelled=cancel;
+    }
 }

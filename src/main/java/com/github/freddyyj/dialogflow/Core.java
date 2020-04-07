@@ -86,9 +86,11 @@ public final class Core extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void onMessageResponse(MessageResponseEvent event){
-		Player sender=event.getSender();
-		String response=event.getResponse().getQueryResult().getFulfillmentText();
+		if (!event.isCancelled()){
+			Player sender=event.getSender();
+			String response=event.getResponse().getQueryResult().getFulfillmentText();
 
-		sender.sendMessage("Response: "+response);
+			sender.sendMessage("Response: "+response);
+		}
 	}
 }
