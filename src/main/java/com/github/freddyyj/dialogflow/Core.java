@@ -29,17 +29,17 @@ public final class Core extends JavaPlugin implements Listener {
 	}
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (args[0].equals("start") && sender instanceof Player) {
+		if (args[0].equals("start") && sender instanceof Player && sender.hasPermission("dialogflow.chat")) {
 			Player player=(Player) sender;
 			dialogFlow.startChatting(player);
 			return true;
 		}
-		else if (args[0].equals("stop") && sender instanceof Player){
+		else if (args[0].equals("stop") && sender instanceof Player && sender.hasPermission("dialogflow.chat")){
 			Player player=(Player) sender;
 			dialogFlow.stopChatting(player);
 			return true;
 		}
-		else if (args[0].equals("send") && sender instanceof Player) {
+		else if (args[0].equals("send") && sender instanceof Player && sender.hasPermission("dialogflow.send")) {
 			Player player=(Player) sender;
 			if (args.length==3)
 			{
@@ -50,7 +50,7 @@ public final class Core extends JavaPlugin implements Listener {
 			}
 			return true;
 		}
-		else if (args[0].equals("language")) {
+		else if (args[0].equals("language") && sender.hasPermission("dialogflow.language")) {
 			sender.sendMessage("Language List for this Agent:");
 			java.util.List<String> list=dialogFlow.getLanguageCodes();
 			for (int i=0;i<list.size();i++) {
@@ -58,7 +58,7 @@ public final class Core extends JavaPlugin implements Listener {
 			}
 			return true;
 		}
-		else if (args[0].equals("list")){
+		else if (args[0].equals("list") && sender.hasPermission("dialogflow.list")){
 			sender.sendMessage("Player list that current chatting:");
 			java.util.List<Player> list=dialogFlow.getPlayerChatting();
 			for (int i=0;i<list.size();i++)
