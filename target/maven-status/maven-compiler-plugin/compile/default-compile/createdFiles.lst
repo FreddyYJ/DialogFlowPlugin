@@ -1,8 +1,0 @@
-com\github\freddyyj\dialogflow\event\MessageResponseEvent.class
-com\github\freddyyj\dialogflow\DialogFlow$ChattingListener.class
-com\github\freddyyj\dialogflow\event\MessageRequestEvent.class
-com\github\freddyyj\dialogflow\Core.class
-com\github\freddyyj\dialogflow\exception\InvalidChatStopException.class
-com\github\freddyyj\dialogflow\DialogFlow.class
-com\github\freddyyj\dialogflow\Key.class
-com\github\freddyyj\dialogflow\exception\InvalidChatStartException.class
