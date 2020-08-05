@@ -1,5 +1,6 @@
 package com.github.freddyyj.dialogflow;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,46 +11,67 @@ import com.github.freddyyj.dialogflow.event.MessageRequestEvent;
 import com.github.freddyyj.dialogflow.event.MessageResponseEvent;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStartException;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStopException;
+import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.api.gax.rpc.ApiCallContext;
+import com.google.api.gax.rpc.ClientContext;
+import com.google.cloud.dialogflow.v2.*;
+import com.google.cloud.dialogflow.v2.stub.AgentsStub;
+import com.google.cloud.dialogflow.v2.stub.GrpcAgentsStub;
+import com.google.cloud.dialogflow.v2.stub.GrpcSessionsStub;
+import com.google.cloud.dialogflow.v2.stub.SessionsStub;
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.google.cloud.dialogflow.v2.Agent;
-import com.google.cloud.dialogflow.v2.AgentsClient;
-import com.google.cloud.dialogflow.v2.DetectIntentRequest;
-import com.google.cloud.dialogflow.v2.DetectIntentResponse;
-import com.google.cloud.dialogflow.v2.ProjectName;
-import com.google.cloud.dialogflow.v2.QueryInput;
-import com.google.cloud.dialogflow.v2.SessionName;
-import com.google.cloud.dialogflow.v2.SessionsClient;
-import com.google.cloud.dialogflow.v2.TextInput;
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-public class DialogFlow {
+public class Agent {
 	private ArrayList<Player> chattingPlayerList;
 	private SessionsClient sessionsClient;
 	private Key key;
 	private Core core;
-	private Agent agent;
+	private com.google.cloud.dialogflow.v2.Agent agent;
 	private AgentsClient client;
-	DialogFlow(Core core) throws IOException {
+	protected Agent(Core core,String keyPath) throws IOException {
 		this.core=core;
-		reloadKey();
+		key=new Key(core,keyPath);
 
-		sessionsClient=SessionsClient.create();
+		ClientContext.Builder contextBuilder=ClientContext.newBuilder();
+		contextBuilder.setCredentials(key.getCredentials());
+		GrpcCallContext callContext=GrpcCallContext.createDefault();
+		contextBuilder.setDefaultCallContext(callContext.withCredentials(key.getCredentials()));
+		ClientContext context=contextBuilder.build();
+		SessionsStub stub= GrpcSessionsStub.create(context);
+		sessionsClient=SessionsClient.create(stub);
 
-		client=AgentsClient.create();
-		ProjectName name=ProjectName.newBuilder().setProject(key.getProjectId()).build();
-		agent=client.getAgent(name);
+		AgentsStub agentsStub= GrpcAgentsStub.create(context);
+		client=AgentsClient.create(agentsStub);
+		ProjectName project=ProjectName.newBuilder().setProject(key.getCredentials().getProjectId()).build();
+		agent=client.getAgent(project);
 		chattingPlayerList=new ArrayList<>();
 		Bukkit.getPluginManager().registerEvents(new ChattingListener(),core);
 	}
-	public void reloadKey() throws FileNotFoundException {
-		key=new Key(core);
+	public static ArrayList<Agent> loadAll(Core core) throws IOException{
+		File folder=core.getDataFolder();
+		File[] keyFile=folder.listFiles();
+		if (keyFile==null) return null;
+
+		ArrayList<Agent> agents=new ArrayList<>();
+		for (int i=0;i< keyFile.length;i++){
+			if (keyFile[i].isFile() && isJson(keyFile[i].getName())){
+				Agent agent=new Agent(core,keyFile[i].getName());
+				agents.add(agent);
+			}
+		}
+		return agents;
+	}
+	private static boolean isJson(String fileName){
+		return fileName.endsWith(".json");
 	}
 	Key getKey() {return key;}
 	public void closeClient() {
@@ -80,7 +102,7 @@ public class DialogFlow {
 		QueryInput query=input.build();
 
 		SessionName.Builder sessionBuilder=SessionName.newBuilder();
-		sessionBuilder.setProject(key.getProjectId());
+		sessionBuilder.setProject(key.getCredentials().getProjectId());
 		sessionBuilder.setSession(player.getName());
 
 		MessageRequestEvent requestEvent=new MessageRequestEvent(player,sessionBuilder.build(),query,isAsync);
@@ -105,6 +127,9 @@ public class DialogFlow {
 		return codeList;
 	}
 	public int getLanguageCodeCount() {return agent.getSupportedLanguageCodesCount()+1;}
+	public String getName(){
+		return agent.getDisplayName();
+	}
 
 	class ChattingListener implements Listener {
 		@EventHandler

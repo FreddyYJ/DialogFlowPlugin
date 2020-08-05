@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.freddyyj</groupId>
   <artifactId>DialogFlowPlugin</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <name>Dialogflow Plugin</name>
   <description>Google DialogFlow plugin for Minecraft craftbukkit plugin</description>
     <packaging>jar</packaging>
@@ -36,7 +36,12 @@
   </repository>
   </repositories>
   <dependencies>
-  	<dependency>
+      <dependency>
+          <groupId>com.google.auth</groupId>
+          <artifactId>google-auth-library-credentials</artifactId>
+          <version>0.21.1</version>
+      </dependency>
+      <dependency>
   		<groupId>org.spigotmc</groupId>
   		<artifactId>spigot-api</artifactId>
         <version>1.14.4-R0.1-SNAPSHOT</version>
