@@ -11,6 +11,7 @@ import javax.json.JsonReader;
 public class Key {
 	private Core core;
 	private ServiceAccountCredentials credentials;
+	public static final String KEY_PATH="key.json";
 	public Key(Core core,String path) throws IOException {
 		this.core=core;
 

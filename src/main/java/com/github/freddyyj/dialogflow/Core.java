@@ -16,15 +16,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public final class Core extends JavaPlugin implements Listener {
-	private ArrayList<Agent> agents;
+	private Agent agent;
 	@Override
 	public void onEnable() {
 		try {
-			agents=Agent.loadAll(this);
-			if (agents==null){
-				getLogger().warning("No Agent found! Are you sure add key.json under plugin/DialogFlowPlugin?");
-				return;
-			}
+			agent=Agent.getInstance(this,Key.KEY_PATH);
 		} catch (IOException e) {
 			getLogger().warning("Plugin loading failed: "+e.getMessage());
 			return;
@@ -32,80 +28,48 @@ public final class Core extends JavaPlugin implements Listener {
 		Bukkit.getPluginManager().registerEvents(this,this);
 
 		getLogger().info("DialogFlowPlugin Enabled!");
-		getLogger().info("List of Agents:");
-		for (int i=0;i<agents.size();i++)
-			getLogger().info("\t"+agents.get(i).getName());
+		getLogger().info("Agent loaded: "+agent.getName());
 		super.onEnable();
 	}
 	@Override
 	public void onDisable() {
 		getLogger().info("DialogFlowPlugin Disabled!");
-		for (int i=0;i<agents.size();i++)
-			agents.get(i).closeClient();
+		agent.closeClient();
 		
 		super.onDisable();
 	}
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (args[0].equals("start") && sender instanceof Player && sender.hasPermission("dialogflow.chat") &&
-				args.length>=2) {
+		if (args[0].equals("start") && sender instanceof Player && sender.hasPermission("dialogflow.chat")) {
 			Player player=(Player) sender;
-			Agent agent=getAgent(args[1]);
-			if (agent==null){
-				player.sendMessage("No Agent found!: "+args[1]);
-				return true;
-			}
-			else {
-				try {
-					agent.startChatting(player);
-				} catch (InvalidChatStartException e) {
-					player.sendMessage("This player is already chatting!");
-				}
+			try {
+				agent.startChatting(player);
+			} catch (InvalidChatStartException e) {
+				player.sendMessage("This player is already chatting!");
 			}
 			return true;
 		}
-		else if (args[0].equals("stop") && sender instanceof Player && sender.hasPermission("dialogflow.chat") &&
-				args.length>=2){
+		else if (args[0].equals("stop") && sender instanceof Player && sender.hasPermission("dialogflow.chat")){
 			Player player=(Player) sender;
-			Agent agent=getAgent(args[1]);
-			if (agent==null){
-				player.sendMessage("No Agent found!: "+args[1]);
-				return true;
-			}
-			else {
-				try {
-					agent.stopChatting(player);
-				} catch (InvalidChatStopException e) {
-					player.sendMessage("This player is already leave chatting!");
-				}
+			try {
+				agent.stopChatting(player);
+			} catch (InvalidChatStopException e) {
+				player.sendMessage("This player is already leave chatting!");
 			}
 			return true;
 		}
-		else if (args[0].equals("send") && sender instanceof Player && sender.hasPermission("dialogflow.send") &&
-				args.length>=4) {
+		else if (args[0].equals("send") && sender instanceof Player && sender.hasPermission("dialogflow.send")) {
 			Player player=(Player) sender;
-			Agent agent=getAgent(args[1]);
-			if (agent==null){
-				player.sendMessage("No Agent found!: "+args[1]);
-				return true;
-			}
-
 			if (args.length==4)
 			{
-				agent.sendMessage(player, args[2],false);
+				agent.sendMessage(player, args[1],false);
 			}
 			else {
-				agent.sendMessage(player, args[2],args[3],false);
+				agent.sendMessage(player, args[1],args[2],false);
 			}
 			return true;
 		}
-		else if (args[0].equals("language") && sender.hasPermission("dialogflow.language") && args.length>=2) {
-			Agent agent=getAgent(args[1]);
-			if (agent==null){
-				sender.sendMessage("No Agent found!: "+args[1]);
-				return true;
-			}
-
+		else if (args[0].equals("language") && sender.hasPermission("dialogflow.language")) {
 			sender.sendMessage("Language List for "+agent.getName()+":");
 			java.util.List<String> list=agent.getLanguageCodes();
 			for (int i=0;i<list.size();i++) {
@@ -114,21 +78,13 @@ public final class Core extends JavaPlugin implements Listener {
 			return true;
 		}
 		else if (args[0].equals("list") && sender.hasPermission("dialogflow.list")){
-			sender.sendMessage("List of all Agents:");
-			for (int i=0;i<agents.size();i++)
-				sender.sendMessage(agents.get(i).getName());
+			sender.sendMessage("List of players who chatting:");
+			for (int i=0;i<agent.getPlayerChatting().size();i++)
+				sender.sendMessage(agent.getPlayerChatting().get(i).getName());
 			return true;
 		}
 		return false;
 	}
-	public Agent getAgent(String name){
-		for (int i=0;i<agents.size();i++){
-			if (agents.get(i).getName().equals(name))
-				return agents.get(i);
-		}
-		return null;
-	}
-
 	@EventHandler
 	public void onMessageResponse(MessageResponseEvent event){
 		if (!event.isCancelled()){

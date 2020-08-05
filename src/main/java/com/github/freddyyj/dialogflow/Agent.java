@@ -31,6 +31,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class Agent {
+	private static Agent singleton=null;
 	private ArrayList<Player> chattingPlayerList;
 	private SessionsClient sessionsClient;
 	private Key key;
@@ -56,19 +57,10 @@ public class Agent {
 		chattingPlayerList=new ArrayList<>();
 		Bukkit.getPluginManager().registerEvents(new ChattingListener(),core);
 	}
-	public static ArrayList<Agent> loadAll(Core core) throws IOException{
-		File folder=core.getDataFolder();
-		File[] keyFile=folder.listFiles();
-		if (keyFile==null) return null;
-
-		ArrayList<Agent> agents=new ArrayList<>();
-		for (int i=0;i< keyFile.length;i++){
-			if (keyFile[i].isFile() && isJson(keyFile[i].getName())){
-				Agent agent=new Agent(core,keyFile[i].getName());
-				agents.add(agent);
-			}
-		}
-		return agents;
+	public static Agent getInstance(Core core, String keyPath) throws IOException {
+		if (singleton==null)
+			singleton=new Agent(core,keyPath);
+		return singleton;
 	}
 	private static boolean isJson(String fileName){
 		return fileName.endsWith(".json");
