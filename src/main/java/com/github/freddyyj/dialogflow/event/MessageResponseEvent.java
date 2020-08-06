@@ -1,5 +1,6 @@
 package com.github.freddyyj.dialogflow.event;
 
+import com.google.cloud.dialogflow.v2.Agent;
 import com.google.cloud.dialogflow.v2.DetectIntentResponse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -11,13 +12,15 @@ public class MessageResponseEvent extends Event implements Cancellable {
     private static final HandlerList handlerList=new HandlerList();
     private Player sender;
     private DetectIntentResponse response;
-    public MessageResponseEvent(Player sender, DetectIntentResponse response){
-        this(sender,response,false);
+    private Agent agent;
+    public MessageResponseEvent(Player sender, DetectIntentResponse response,Agent agent){
+        this(sender,response,agent,false);
     }
-    public MessageResponseEvent(Player sender, DetectIntentResponse response,boolean isAsync){
+    public MessageResponseEvent(Player sender, DetectIntentResponse response,Agent agent,boolean isAsync){
         super(isAsync);
         this.sender=sender;
         this.response=response;
+        this.agent=agent;
     }
 
     @Override
@@ -29,6 +32,7 @@ public class MessageResponseEvent extends Event implements Cancellable {
     }
     public Player getSender(){return sender;}
     public DetectIntentResponse getResponse(){return response;}
+    public Agent getAgent(){return agent;}
 
     @Override
     public boolean isCancelled() {

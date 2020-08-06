@@ -1,6 +1,6 @@
 name: DialogFlowPlugin
 main: com.github.freddyyj.dialogflow.Core
-version: 0.0.1
+version: 0.2.0
 author: FreddyYJ_
 commands:
     df:
@@ -19,14 +19,14 @@ permissions:
         description: Allow to chat with DialogFlow.
         default: true
     dialogflow.send:
-        description: Allow to send request to DialogFlow.
+        description: Allow to send request to DialogFlow once.
         default: true
     dialogflow.language:
         description: Allow to look language list for current Agent.
         default: true
     dialogflow.list:
-        description: Allow to look player list who current chatting.
-        default: op
+        description: Allow to look Agent list.
+        default: true
     dialogflow.*:
         description: Allow all permissions.
         default: op
