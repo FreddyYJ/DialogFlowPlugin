@@ -11,6 +11,8 @@ import com.github.freddyyj.dialogflow.event.MessageRequestEvent;
 import com.github.freddyyj.dialogflow.event.MessageResponseEvent;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStartException;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStopException;
+import com.google.api.gax.core.FixedCredentialsProvider;
+import com.google.api.gax.core.GoogleCredentialsProvider;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.rpc.ApiCallContext;
 import com.google.api.gax.rpc.ClientContext;
@@ -42,16 +44,12 @@ public class Agent {
 		this.core=core;
 		key=new Key(core,keyPath);
 
-		ClientContext.Builder contextBuilder=ClientContext.newBuilder();
-		contextBuilder.setCredentials(key.getCredentials());
-		GrpcCallContext callContext=GrpcCallContext.createDefault();
-		contextBuilder.setDefaultCallContext(callContext.withCredentials(key.getCredentials()));
-		ClientContext context=contextBuilder.build();
-		SessionsStub stub= GrpcSessionsStub.create(context);
-		sessionsClient=SessionsClient.create(stub);
+		FixedCredentialsProvider credentialsProvider=FixedCredentialsProvider.create(key.getCredentials());
+		SessionsSettings sessionsSetting=SessionsSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
+		sessionsClient=SessionsClient.create(sessionsSetting);
 
-		AgentsStub agentsStub= GrpcAgentsStub.create(context);
-		client=AgentsClient.create(agentsStub);
+		AgentsSettings agentsSetting=AgentsSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
+		client=AgentsClient.create(agentsSetting);
 		ProjectName project=ProjectName.newBuilder().setProject(key.getCredentials().getProjectId()).build();
 		agent=client.getAgent(project);
 		chattingPlayerList=new ArrayList<>();
@@ -97,12 +95,12 @@ public class Agent {
 		sessionBuilder.setProject(key.getCredentials().getProjectId());
 		sessionBuilder.setSession(player.getName());
 
-		MessageRequestEvent requestEvent=new MessageRequestEvent(player,sessionBuilder.build(),query,isAsync);
+		MessageRequestEvent requestEvent=new MessageRequestEvent(player,sessionBuilder.build(),query,this.agent,isAsync);
 		Bukkit.getServer().getPluginManager().callEvent(requestEvent);
 
 		DetectIntentResponse response=sessionsClient.detectIntent(sessionBuilder.build(),query);
 
-		MessageResponseEvent responseEvent=new MessageResponseEvent(player,response,isAsync);
+		MessageResponseEvent responseEvent=new MessageResponseEvent(player,response,this.agent,isAsync);
 		Bukkit.getServer().getPluginManager().callEvent(responseEvent);
 	}
 	public String getDefaultLanguageCode() {
@@ -128,6 +126,7 @@ public class Agent {
 		public void onAsyncPlayerChat(AsyncPlayerChatEvent event){
 			Player player=event.getPlayer();
 			String msg=event.getMessage();
+			player.sendMessage("<"+player.getDisplayName()+"> "+msg);
 			if (isPlayerChatting(player)) {
 				event.setCancelled(true);
 				sendMessage(player, msg,true);

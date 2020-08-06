@@ -1,5 +1,6 @@
 package com.github.freddyyj.dialogflow.event;
 
+import com.google.cloud.dialogflow.v2.Agent;
 import com.google.cloud.dialogflow.v2.DetectIntentRequest;
 import com.google.cloud.dialogflow.v2.QueryInput;
 import com.google.cloud.dialogflow.v2.SessionName;
@@ -14,14 +15,16 @@ public class MessageRequestEvent extends Event implements Cancellable {
     private Player sender;
     private SessionName sessionName;
     private QueryInput input;
-    public MessageRequestEvent(Player sender,SessionName session, QueryInput input){
-        this(sender,session,input,false);
+    private Agent agent;
+    public MessageRequestEvent(Player sender,SessionName session, QueryInput input,Agent agent){
+        this(sender,session,input,agent,false);
     }
-    public MessageRequestEvent(Player sender, SessionName session, QueryInput input, boolean isAsync){
+    public MessageRequestEvent(Player sender, SessionName session, QueryInput input,Agent agent,boolean isAsync){
         super(isAsync);
         this.sender=sender;
         this.sessionName=session;
         this.input=input;
+        this.agent=agent;
     }
     @Override
     public HandlerList getHandlers() {
@@ -33,6 +36,7 @@ public class MessageRequestEvent extends Event implements Cancellable {
     public Player getSender(){return sender;}
     public SessionName getSessionName(){return sessionName;}
     public QueryInput getQueryInput(){return input;}
+    public Agent getAgent(){return agent;}
 
     @Override
     public boolean isCancelled() {
