@@ -1,11 +1,14 @@
 package com.github.freddyyj.dialogflow;
 
+import com.github.freddyyj.dialogflow.config.Configuration;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStartException;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStopException;
+import com.github.freddyyj.dialogflow.exception.InvalidKeyException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,25 +21,39 @@ import java.util.ArrayList;
 
 public final class Core extends JavaPlugin implements Listener {
 	private Agent agent;
+	private Configuration config;
+	private boolean isEnabled=false;
 	@Override
 	public void onEnable() {
 		try {
 			agent=Agent.getInstance(this,Key.KEY_PATH);
-		} catch (IOException e) {
+		} catch (IOException | InvalidKeyException e) {
 			getLogger().warning("Plugin loading failed: "+e.getMessage());
 			return;
 		}
 		Bukkit.getPluginManager().registerEvents(this,this);
 
+		try {
+			config=new Configuration(this);
+		} catch (InvalidConfigurationException e) {
+			getLogger().warning("Plugin loading failed: "+e.getMessage());
+			return;
+		}
+		agent.name=config.getAgentName();
+		agent.color=config.getAgentColor();
+
+		isEnabled=true;
 		getLogger().info("DialogFlowPlugin Enabled!");
-		getLogger().info("Agent loaded: "+agent.getName());
+		getLogger().info("Agent loaded: "+agent.name);
 		super.onEnable();
 	}
 	@Override
 	public void onDisable() {
+		if (isEnabled){
+			agent.closeClient();
+		}
 		getLogger().info("DialogFlowPlugin Disabled!");
-		agent.closeClient();
-		
+
 		super.onDisable();
 	}
 	@Override
@@ -60,7 +77,7 @@ public final class Core extends JavaPlugin implements Listener {
 			Player player=(Player) sender;
 			try {
 				agent.startChatting(player);
-				player.sendMessage("Start chatting with Agent "+agent.getName()+"!");
+				player.sendMessage("Start chatting with Agent "+agent.name+"!");
 			} catch (InvalidChatStartException e) {
 				player.sendMessage("This player is already chatting!");
 			}
@@ -70,7 +87,7 @@ public final class Core extends JavaPlugin implements Listener {
 			Player player=(Player) sender;
 			try {
 				agent.stopChatting(player);
-				player.sendMessage("Stop chatting with Agent "+agent.getName()+"!");
+				player.sendMessage("Stop chatting with Agent "+agent.name+"!");
 			} catch (InvalidChatStopException e) {
 				player.sendMessage("This player is already leave chatting!");
 			}
@@ -89,7 +106,7 @@ public final class Core extends JavaPlugin implements Listener {
 			return true;
 		}
 		else if (args[0].equals("language") && sender.hasPermission("dialogflow.language")) {
-			sender.sendMessage("Language List for "+agent.getName()+":");
+			sender.sendMessage("Language List for "+agent.name+":");
 			java.util.List<String> list=agent.getLanguageCodes();
 			for (int i=0;i<list.size();i++) {
 				sender.sendMessage(list.get(i));
@@ -97,7 +114,7 @@ public final class Core extends JavaPlugin implements Listener {
 			return true;
 		}
 		else if (args[0].equals("list") && sender.hasPermission("dialogflow.list")){
-			sender.sendMessage("List of players who chatting with "+agent.getName()+":");
+			sender.sendMessage("List of players who chatting with "+agent.name+":");
 			for (int i=0;i<agent.getPlayerChatting().size();i++)
 				sender.sendMessage(agent.getPlayerChatting().get(i).getName());
 			return true;
@@ -110,7 +127,7 @@ public final class Core extends JavaPlugin implements Listener {
 			Player sender=event.getSender();
 			String response=event.getResponse().getQueryResult().getFulfillmentText();
 
-			sender.sendMessage("["+ ChatColor.AQUA+event.getAgent().getDisplayName()+"] "+response);
+			sender.sendMessage("["+agent.color+agent.name+ChatColor.WHITE+"] "+response);
 		}
 	}
 }
