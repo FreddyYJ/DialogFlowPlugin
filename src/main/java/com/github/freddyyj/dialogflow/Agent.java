@@ -42,7 +42,7 @@ public class Agent {
 	private Core core;
 	private com.google.cloud.dialogflow.v2.Agent agent;
 	private AgentsClient client;
-	public String name;
+	private String name;
 	public ChatColor color;
 	protected Agent(Core core,String keyPath,String name,ChatColor color) throws InvalidKeyException, IOException {
 		this.core=core;
@@ -142,6 +142,18 @@ public class Agent {
 		return codeList;
 	}
 	public int getLanguageCodeCount() {return agent.getSupportedLanguageCodesCount()+1;}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		if (name==null){
+			this.name=agent.getDisplayName();
+		}
+		else
+			this.name = name;
+	}
 
 	class ChattingListener implements Listener {
 		@EventHandler

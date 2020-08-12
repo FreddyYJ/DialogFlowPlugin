@@ -1,6 +1,6 @@
 name: DialogFlowPlugin
 main: com.github.freddyyj.dialogflow.Core
-version: 0.2.0
+version: 0.3.0
 author: FreddyYJ_
 commands:
     df:

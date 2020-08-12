@@ -39,12 +39,12 @@ public final class Core extends JavaPlugin implements Listener {
 			getLogger().warning("Plugin loading failed: "+e.getMessage());
 			return;
 		}
-		agent.name=config.getAgentName();
+		if (config.getAgentName()!=null) agent.setName(config.getAgentName());
 		agent.color=config.getAgentColor();
 
 		isEnabled=true;
 		getLogger().info("DialogFlowPlugin Enabled!");
-		getLogger().info("Agent loaded: "+agent.name);
+		getLogger().info("Agent loaded: "+agent.getName());
 		super.onEnable();
 	}
 	@Override
@@ -77,7 +77,7 @@ public final class Core extends JavaPlugin implements Listener {
 			Player player=(Player) sender;
 			try {
 				agent.startChatting(player);
-				player.sendMessage("Start chatting with Agent "+agent.name+"!");
+				player.sendMessage("Start chatting with Agent "+agent.getName()+"!");
 			} catch (InvalidChatStartException e) {
 				player.sendMessage("This player is already chatting!");
 			}
@@ -87,7 +87,7 @@ public final class Core extends JavaPlugin implements Listener {
 			Player player=(Player) sender;
 			try {
 				agent.stopChatting(player);
-				player.sendMessage("Stop chatting with Agent "+agent.name+"!");
+				player.sendMessage("Stop chatting with Agent "+agent.getName()+"!");
 			} catch (InvalidChatStopException e) {
 				player.sendMessage("This player is already leave chatting!");
 			}
@@ -106,7 +106,7 @@ public final class Core extends JavaPlugin implements Listener {
 			return true;
 		}
 		else if (args[0].equals("language") && sender.hasPermission("dialogflow.language")) {
-			sender.sendMessage("Language List for "+agent.name+":");
+			sender.sendMessage("Language List for "+agent.getName()+":");
 			java.util.List<String> list=agent.getLanguageCodes();
 			for (int i=0;i<list.size();i++) {
 				sender.sendMessage(list.get(i));
@@ -114,7 +114,7 @@ public final class Core extends JavaPlugin implements Listener {
 			return true;
 		}
 		else if (args[0].equals("list") && sender.hasPermission("dialogflow.list")){
-			sender.sendMessage("List of players who chatting with "+agent.name+":");
+			sender.sendMessage("List of players who chatting with "+agent.getName()+":");
 			for (int i=0;i<agent.getPlayerChatting().size();i++)
 				sender.sendMessage(agent.getPlayerChatting().get(i).getName());
 			return true;
@@ -127,7 +127,7 @@ public final class Core extends JavaPlugin implements Listener {
 			Player sender=event.getSender();
 			String response=event.getResponse().getQueryResult().getFulfillmentText();
 
-			sender.sendMessage("["+agent.color+agent.name+ChatColor.WHITE+"] "+response);
+			sender.sendMessage("["+agent.color+agent.getName()+ChatColor.WHITE+"] "+response);
 		}
 	}
 }

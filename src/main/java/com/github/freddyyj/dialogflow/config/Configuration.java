@@ -23,10 +23,12 @@ public class Configuration{
         else{
             agentName=agentConfig.getString("name"); // agent.name
             agentColor=agentConfig.getString("color"); // agent.color
-            if (agentName==null || agentColor==null){
+            if (agentName==null || agentColor==null) {
                 throw new InvalidConfigurationException("Invalid config! Did you edit config path, not value?");
             }
             else{
+                if (agentName.equals("none"))
+                    agentName=null;
                 agentColor=agentColor.toUpperCase();
             }
         }
