@@ -1,8 +1,11 @@
 # DialogFlowPlugin
-This plugin is for using Dialogflow in Minecraft SpigotMC. It is compatible with Spigot version 1.14.4. Default running is send messages and receive responses.
-Also, it has two custom event to add some work at send/receive messages. Default is send response message to sender.
+DialogFlowPlugin is for accessing DialogFlow agents by Google Cloud Project service key file. Default work is conversation with DialogFlow Agent, but developers can add more actions by add event listener.
 
 # Changelog
+ver 0.3.0
+* Add configuration Agent name and color.
+* Add new InvalidKeyException for handle invalid key.json
+
 ver 0.2.0
 * Chatting improvements with Agent-similar as normal chatting
 * /df or /dialogflow prints command list that has player has permission
