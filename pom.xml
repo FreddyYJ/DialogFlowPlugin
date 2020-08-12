@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.freddyyj</groupId>
   <artifactId>DialogFlowPlugin</artifactId>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
   <name>Dialogflow Plugin</name>
   <description>Google DialogFlow plugin for Minecraft craftbukkit plugin</description>
     <packaging>jar</packaging>

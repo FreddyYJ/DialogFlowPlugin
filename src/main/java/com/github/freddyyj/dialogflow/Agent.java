@@ -11,6 +11,7 @@ import com.github.freddyyj.dialogflow.event.MessageRequestEvent;
 import com.github.freddyyj.dialogflow.event.MessageResponseEvent;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStartException;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStopException;
+import com.github.freddyyj.dialogflow.exception.InvalidKeyException;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.api.gax.core.GoogleCredentialsProvider;
 import com.google.api.gax.grpc.GrpcCallContext;
@@ -22,6 +23,7 @@ import com.google.cloud.dialogflow.v2.stub.GrpcAgentsStub;
 import com.google.cloud.dialogflow.v2.stub.GrpcSessionsStub;
 import com.google.cloud.dialogflow.v2.stub.SessionsStub;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -40,7 +42,9 @@ public class Agent {
 	private Core core;
 	private com.google.cloud.dialogflow.v2.Agent agent;
 	private AgentsClient client;
-	protected Agent(Core core,String keyPath) throws IOException {
+	private String name;
+	public ChatColor color;
+	protected Agent(Core core,String keyPath,String name,ChatColor color) throws InvalidKeyException, IOException {
 		this.core=core;
 		key=new Key(core,keyPath);
 
@@ -54,10 +58,31 @@ public class Agent {
 		agent=client.getAgent(project);
 		chattingPlayerList=new ArrayList<>();
 		Bukkit.getPluginManager().registerEvents(new ChattingListener(),core);
+
+		this.name=name;
+		this.color=color;
 	}
-	public static Agent getInstance(Core core, String keyPath) throws IOException {
+	protected Agent(Core core,String keyPath,ChatColor color) throws IOException, InvalidKeyException {
+		this.core=core;
+		key=new Key(core,keyPath);
+
+		FixedCredentialsProvider credentialsProvider=FixedCredentialsProvider.create(key.getCredentials());
+		SessionsSettings sessionsSetting=SessionsSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
+		sessionsClient=SessionsClient.create(sessionsSetting);
+
+		AgentsSettings agentsSetting=AgentsSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
+		client=AgentsClient.create(agentsSetting);
+		ProjectName project=ProjectName.newBuilder().setProject(key.getCredentials().getProjectId()).build();
+		agent=client.getAgent(project);
+		chattingPlayerList=new ArrayList<>();
+		Bukkit.getPluginManager().registerEvents(new ChattingListener(),core);
+
+		this.name=agent.getDisplayName();
+		this.color=color;
+	}
+	public static Agent getInstance(Core core, String keyPath) throws IOException, InvalidKeyException {
 		if (singleton==null)
-			singleton=new Agent(core,keyPath);
+			singleton=new Agent(core,keyPath,ChatColor.WHITE);
 		return singleton;
 	}
 	private static boolean isJson(String fileName){
@@ -117,8 +142,17 @@ public class Agent {
 		return codeList;
 	}
 	public int getLanguageCodeCount() {return agent.getSupportedLanguageCodesCount()+1;}
-	public String getName(){
-		return agent.getDisplayName();
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		if (name==null){
+			this.name=agent.getDisplayName();
+		}
+		else
+			this.name = name;
 	}
 
 	class ChattingListener implements Listener {

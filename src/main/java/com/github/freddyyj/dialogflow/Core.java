@@ -1,11 +1,14 @@
 package com.github.freddyyj.dialogflow;
 
+import com.github.freddyyj.dialogflow.config.Configuration;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStartException;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStopException;
+import com.github.freddyyj.dialogflow.exception.InvalidKeyException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,25 +21,39 @@ import java.util.ArrayList;
 
 public final class Core extends JavaPlugin implements Listener {
 	private Agent agent;
+	private Configuration config;
+	private boolean isEnabled=false;
 	@Override
 	public void onEnable() {
 		try {
 			agent=Agent.getInstance(this,Key.KEY_PATH);
-		} catch (IOException e) {
+		} catch (IOException | InvalidKeyException e) {
 			getLogger().warning("Plugin loading failed: "+e.getMessage());
 			return;
 		}
 		Bukkit.getPluginManager().registerEvents(this,this);
 
+		try {
+			config=new Configuration(this);
+		} catch (InvalidConfigurationException e) {
+			getLogger().warning("Plugin loading failed: "+e.getMessage());
+			return;
+		}
+		if (config.getAgentName()!=null) agent.setName(config.getAgentName());
+		agent.color=config.getAgentColor();
+
+		isEnabled=true;
 		getLogger().info("DialogFlowPlugin Enabled!");
 		getLogger().info("Agent loaded: "+agent.getName());
 		super.onEnable();
 	}
 	@Override
 	public void onDisable() {
+		if (isEnabled){
+			agent.closeClient();
+		}
 		getLogger().info("DialogFlowPlugin Disabled!");
-		agent.closeClient();
-		
+
 		super.onDisable();
 	}
 	@Override
@@ -110,7 +127,7 @@ public final class Core extends JavaPlugin implements Listener {
 			Player sender=event.getSender();
 			String response=event.getResponse().getQueryResult().getFulfillmentText();
 
-			sender.sendMessage("["+ ChatColor.AQUA+event.getAgent().getDisplayName()+"] "+response);
+			sender.sendMessage("["+agent.color+agent.getName()+ChatColor.WHITE+"] "+response);
 		}
 	}
 }
