@@ -5,6 +5,7 @@ DialogFlowPlugin is for accessing DialogFlow agents by Google Cloud Project serv
 ver 0.3.0
 * Add configuration Agent name and color.
 * Add new InvalidKeyException for handle invalid key.json
+* Create javadoc
 
 ver 0.2.0
 * Chatting improvements with Agent-similar as normal chatting
