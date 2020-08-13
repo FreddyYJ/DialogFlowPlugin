@@ -2,7 +2,7 @@
 DialogFlowPlugin is for accessing DialogFlow agents by Google Cloud Project service key file. Default work is conversation with DialogFlow Agent, but developers can add more actions by add event listener.
 
 # Changelog
-ver 0.3.0
+ver 0.3.0 (no release)
 * Add configuration Agent name and color.
 * Add new InvalidKeyException for handle invalid key.json
 * Create javadoc
