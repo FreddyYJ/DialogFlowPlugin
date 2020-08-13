@@ -29,7 +29,7 @@ public final class Core extends JavaPlugin implements Listener {
 	private boolean isEnabled=false;
 
 	/**
-	 * Called when plugin enabled.
+	 * Override {@link JavaPlugin#onEnable()} method.
 	 */
 	@Override
 	public void onEnable() {
@@ -57,7 +57,7 @@ public final class Core extends JavaPlugin implements Listener {
 	}
 
 	/**
-	 * Called when plugin disabled.
+	 * Override {@link JavaPlugin#onDisable()} method.
 	 */
 	@Override
 	public void onDisable() {
@@ -70,12 +70,7 @@ public final class Core extends JavaPlugin implements Listener {
 	}
 
 	/**
-	 * Called when /df or /dialogflow runned.
-	 * @param sender sender who call command.
-	 * @param command Command object about runned command.
-	 * @param label String that command params.
-	 * @param args String array that has command params.
-	 * @return true when success, false when failed.
+	 * Override {@link JavaPlugin#onCommand(CommandSender, Command, String, String[])} method.
 	 */
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
