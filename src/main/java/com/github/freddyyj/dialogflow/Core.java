@@ -19,10 +19,18 @@ import com.github.freddyyj.dialogflow.event.MessageResponseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * JavaPlugin for DialogFlowPlugin.
+ * @author FreddyYJ_
+ */
 public final class Core extends JavaPlugin implements Listener {
 	private Agent agent;
 	private Configuration config;
 	private boolean isEnabled=false;
+
+	/**
+	 * Called when plugin enabled.
+	 */
 	@Override
 	public void onEnable() {
 		try {
@@ -47,6 +55,10 @@ public final class Core extends JavaPlugin implements Listener {
 		getLogger().info("Agent loaded: "+agent.getName());
 		super.onEnable();
 	}
+
+	/**
+	 * Called when plugin disabled.
+	 */
 	@Override
 	public void onDisable() {
 		if (isEnabled){
@@ -56,6 +68,15 @@ public final class Core extends JavaPlugin implements Listener {
 
 		super.onDisable();
 	}
+
+	/**
+	 * Called when /df or /dialogflow runned.
+	 * @param sender sender who call command.
+	 * @param command Command object about runned command.
+	 * @param label String that command params.
+	 * @param args String array that has command params.
+	 * @return true when success, false when failed.
+	 */
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (args.length==0){
@@ -121,6 +142,14 @@ public final class Core extends JavaPlugin implements Listener {
 		}
 		return false;
 	}
+
+	/**
+	 * Default listener when DialogFlow message received.
+	 * <p>
+	 *     If you want custom listener, create and register same as Spigot event listener.
+	 * </p>
+	 * @param event event MessageResponseEvent object.
+	 */
 	@EventHandler
 	public void onMessageResponse(MessageResponseEvent event){
 		if (!event.isCancelled()){
