@@ -47,6 +47,7 @@ public class Agent {
 	private com.google.cloud.dialogflow.v2.Agent agent;
 	private AgentsClient client;
 	private String name;
+	private ArrayList<SessionName> sessions;
 	/**
 	 * Agent color for chat response.
 	 */
@@ -64,6 +65,7 @@ public class Agent {
 	protected Agent(Core core,String keyPath,String name,ChatColor color) throws InvalidKeyException, IOException {
 		this.core=core;
 		key=new Key(core,keyPath);
+		sessions=new ArrayList<>();
 
 		FixedCredentialsProvider credentialsProvider=FixedCredentialsProvider.create(key.getCredentials());
 		SessionsSettings sessionsSetting=SessionsSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
@@ -75,6 +77,13 @@ public class Agent {
 		agent=client.getAgent(project);
 		chattingPlayerList=new ArrayList<>();
 		Bukkit.getPluginManager().registerEvents(new ChattingListener(),core);
+
+		core.getServer().getOnlinePlayers().forEach(player -> {
+			SessionName.Builder sessionBuilder=SessionName.newBuilder();
+			sessionBuilder.setProject(key.getCredentials().getProjectId());
+			sessionBuilder.setSession(player.getName());
+			sessions.add(sessionBuilder.build());
+		});
 
 		this.name=name;
 		this.color=color;
@@ -91,6 +100,7 @@ public class Agent {
 	protected Agent(Core core,String keyPath,ChatColor color) throws IOException, InvalidKeyException {
 		this.core=core;
 		key=new Key(core,keyPath);
+		sessions=new ArrayList<>();
 
 		FixedCredentialsProvider credentialsProvider=FixedCredentialsProvider.create(key.getCredentials());
 		SessionsSettings sessionsSetting=SessionsSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
@@ -102,6 +112,13 @@ public class Agent {
 		agent=client.getAgent(project);
 		chattingPlayerList=new ArrayList<>();
 		Bukkit.getPluginManager().registerEvents(new ChattingListener(),core);
+
+		core.getServer().getOnlinePlayers().forEach(player -> {
+			SessionName.Builder sessionBuilder=SessionName.newBuilder();
+			sessionBuilder.setProject(key.getCredentials().getProjectId());
+			sessionBuilder.setSession(player.getName());
+			sessions.add(sessionBuilder.build());
+		});
 
 		this.name=agent.getDisplayName();
 		this.color=color;
@@ -119,22 +136,7 @@ public class Agent {
 	 * @throws InvalidKeyException Throws error when creating sessions or agent object.
 	 */
 	protected Agent(Core core,String keyPath) throws IOException, InvalidKeyException {
-		this.core=core;
-		key=new Key(core,keyPath);
-
-		FixedCredentialsProvider credentialsProvider=FixedCredentialsProvider.create(key.getCredentials());
-		SessionsSettings sessionsSetting=SessionsSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
-		sessionsClient=SessionsClient.create(sessionsSetting);
-
-		AgentsSettings agentsSetting=AgentsSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
-		client=AgentsClient.create(agentsSetting);
-		ProjectName project=ProjectName.newBuilder().setProject(key.getCredentials().getProjectId()).build();
-		agent=client.getAgent(project);
-		chattingPlayerList=new ArrayList<>();
-		Bukkit.getPluginManager().registerEvents(new ChattingListener(),core);
-
-		this.name=agent.getDisplayName();
-		this.color=ChatColor.WHITE;
+		this(core,keyPath,ChatColor.WHITE);
 	}
 
 	/**
@@ -228,14 +230,10 @@ public class Agent {
 		input.setText(textBuilder);
 		QueryInput query=input.build();
 
-		SessionName.Builder sessionBuilder=SessionName.newBuilder();
-		sessionBuilder.setProject(key.getCredentials().getProjectId());
-		sessionBuilder.setSession(player.getName());
-
-		MessageRequestEvent requestEvent=new MessageRequestEvent(player,sessionBuilder.build(),query,this.agent,isAsync);
+		MessageRequestEvent requestEvent=new MessageRequestEvent(player,getSession(player),query,this.agent,isAsync);
 		Bukkit.getServer().getPluginManager().callEvent(requestEvent);
 
-		DetectIntentResponse response=sessionsClient.detectIntent(sessionBuilder.build(),query);
+		DetectIntentResponse response=sessionsClient.detectIntent(getSession(player),query);
 
 		MessageResponseEvent responseEvent=new MessageResponseEvent(player,response,this.agent,isAsync);
 		Bukkit.getServer().getPluginManager().callEvent(responseEvent);
@@ -288,6 +286,61 @@ public class Agent {
 		}
 		else
 			this.name = name;
+	}
+
+	/**
+	 * Create new Session for Player.
+	 * @param player player that want to create
+	 */
+	public void createSession(Player player){
+		SessionName.Builder sessionBuilder=SessionName.newBuilder();
+		sessionBuilder.setProject(key.getCredentials().getProjectId());
+		sessionBuilder.setSession(player.getName());
+		sessions.add(sessionBuilder.build());
+	}
+
+	/**
+	 * Close and remove session. If not exist, do nothing.
+	 * @param player player that want to close
+	 */
+	public void removeSession(Player player){
+		for (int i=0;i< sessions.size();i++){
+			if (sessions.get(i).getSession().equals(player.getName()))
+			{
+				sessions.remove(i);
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Check this agent has session.
+	 * @param player player that want to check
+	 * @return true if session exist, false if not.
+	 */
+	public boolean hasSession(Player player){
+		for (int i=0;i< sessions.size();i++){
+			if (sessions.get(i).getSession().equals(player.getName()))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Get session if exist.
+	 * @param player player that want to get
+	 * @return SessionName if session exist. if not exist, return null.
+	 */
+	protected SessionName getSession(Player player){
+		for (int i=0;i< sessions.size();i++){
+			if (sessions.get(i).getSession().equals(player.getName()))
+			{
+				return sessions.get(i);
+			}
+		}
+		return null;
 	}
 
 	class ChattingListener implements Listener {

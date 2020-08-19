@@ -8,7 +8,7 @@ import java.io.*;
 /**
  * Class for read service key account file.
  */
-public class Key {
+class Key {
 	private Core core;
 	private ServiceAccountCredentials credentials;
 	/**

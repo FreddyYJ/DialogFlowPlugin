@@ -12,6 +12,8 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.github.freddyyj.dialogflow.event.MessageResponseEvent;
@@ -153,5 +155,23 @@ public final class Core extends JavaPlugin implements Listener {
 
 			sender.sendMessage("["+agent.color+agent.getName()+ChatColor.WHITE+"] "+response);
 		}
+	}
+
+	/**
+	 * listener to handle session creation
+	 * @param event PlayerJoinEvent object
+	 */
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event){
+		agent.createSession(event.getPlayer());
+	}
+
+	/**
+	 * listener to handler session remove
+	 * @param event PlayerQuitEvent object
+	 */
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent event){
+		agent.removeSession(event.getPlayer());
 	}
 }
