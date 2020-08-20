@@ -1,6 +1,9 @@
 package com.github.freddyyj.dialogflow.exception;
 
-public class InvalidChatStopException extends Exception {
+/**
+ * Exception for handle error at stopping chatting with DialogFlow
+ */
+public class InvalidChatStopException extends RuntimeException {
     String message;
     Throwable cause;
     public InvalidChatStopException(){

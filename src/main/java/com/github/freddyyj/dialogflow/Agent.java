@@ -9,9 +9,12 @@ import java.util.List;
 
 import com.github.freddyyj.dialogflow.event.MessageRequestEvent;
 import com.github.freddyyj.dialogflow.event.MessageResponseEvent;
+import com.github.freddyyj.dialogflow.event.SessionCreatedEvent;
+import com.github.freddyyj.dialogflow.event.SessionRemovedEvent;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStartException;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStopException;
 import com.github.freddyyj.dialogflow.exception.InvalidKeyException;
+import com.github.freddyyj.dialogflow.exception.SessionNotFoundException;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.api.gax.core.GoogleCredentialsProvider;
 import com.google.api.gax.grpc.GrpcCallContext;
@@ -34,6 +37,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+/**
+ * Agent class. It should be Singleton.
+ * @author FreddyYJ_
+ */
 public class Agent {
 	private static Agent singleton=null;
 	private ArrayList<Player> chattingPlayerList;
@@ -43,10 +50,25 @@ public class Agent {
 	private com.google.cloud.dialogflow.v2.Agent agent;
 	private AgentsClient client;
 	private String name;
+	private ArrayList<SessionName> sessions;
+	/**
+	 * Agent color for chat response.
+	 */
 	public ChatColor color;
+
+	/**
+	 * Constructor with custom Agent name and color.
+	 * @param core DialogFlowPlugin core.
+	 * @param keyPath Service key file path for this agent. Default is Key.KEY_PATH.
+	 * @param name Custom name for this agent.
+	 * @param color Custom color for this agent.
+	 * @throws InvalidKeyException Throws if service key file is invalid.
+	 * @throws IOException Throws error when creating sessions or agent object.
+	 */
 	protected Agent(Core core,String keyPath,String name,ChatColor color) throws InvalidKeyException, IOException {
 		this.core=core;
 		key=new Key(core,keyPath);
+		sessions=new ArrayList<>();
 
 		FixedCredentialsProvider credentialsProvider=FixedCredentialsProvider.create(key.getCredentials());
 		SessionsSettings sessionsSetting=SessionsSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
@@ -58,13 +80,33 @@ public class Agent {
 		agent=client.getAgent(project);
 		chattingPlayerList=new ArrayList<>();
 		Bukkit.getPluginManager().registerEvents(new ChattingListener(),core);
+
+		core.getServer().getOnlinePlayers().forEach(player -> {
+			SessionName.Builder sessionBuilder=SessionName.newBuilder();
+			sessionBuilder.setProject(key.getCredentials().getProjectId());
+			sessionBuilder.setSession(player.getName());
+			sessions.add(sessionBuilder.build());
+
+			SessionCreatedEvent event=new SessionCreatedEvent(player,sessionBuilder.build(),this);
+			Bukkit.getServer().getPluginManager().callEvent(event);
+		});
 
 		this.name=name;
 		this.color=color;
 	}
+
+	/**
+	 * Constructor with custom Agent color.
+	 * @param core DialogFlowPlugin core.
+	 * @param keyPath Service key file path for this agent. Default is Key.KEY_PATH.
+	 * @param color Custom color for this agent.
+	 * @throws IOException Throws if service key file is invalid.
+	 * @throws InvalidKeyException Throws error when creating sessions or agent object.
+	 */
 	protected Agent(Core core,String keyPath,ChatColor color) throws IOException, InvalidKeyException {
 		this.core=core;
 		key=new Key(core,keyPath);
+		sessions=new ArrayList<>();
 
 		FixedCredentialsProvider credentialsProvider=FixedCredentialsProvider.create(key.getCredentials());
 		SessionsSettings sessionsSetting=SessionsSettings.newBuilder().setCredentialsProvider(credentialsProvider).build();
@@ -77,37 +119,118 @@ public class Agent {
 		chattingPlayerList=new ArrayList<>();
 		Bukkit.getPluginManager().registerEvents(new ChattingListener(),core);
 
+		core.getServer().getOnlinePlayers().forEach(player -> {
+			SessionName.Builder sessionBuilder=SessionName.newBuilder();
+			sessionBuilder.setProject(key.getCredentials().getProjectId());
+			sessionBuilder.setSession(player.getName());
+			sessions.add(sessionBuilder.build());
+
+			SessionCreatedEvent event=new SessionCreatedEvent(player,sessionBuilder.build(),this);
+			Bukkit.getServer().getPluginManager().callEvent(event);
+		});
+
 		this.name=agent.getDisplayName();
 		this.color=color;
 	}
+
+	/**
+	 * Constructor with default Agent name and color.
+	 * <p>
+	 *     Default Agent name is from DialogFlow agent name.
+	 *     Default Agent color is white.
+	 * </p>
+	 * @param core DialogFlowPlugin core.
+	 * @param keyPath Service key file path for this agent. Default is Key.KEY_PATH.
+	 * @throws IOException Throws if service key file is invalid.
+	 * @throws InvalidKeyException Throws error when creating sessions or agent object.
+	 */
+	protected Agent(Core core,String keyPath) throws IOException, InvalidKeyException {
+		this(core,keyPath,ChatColor.WHITE);
+	}
+
+	/**
+	 * Method for get Agent object.
+	 * @param core DialogFlowPlugin core.
+	 * @param keyPath Service key file path for this agent. Default is Key.KEY_PATH.
+	 * @return new or existed Agent object.
+	 * @throws IOException Throws if service key file is invalid.
+	 * @throws InvalidKeyException Throws error when creating sessions or agent object.
+	 */
 	public static Agent getInstance(Core core, String keyPath) throws IOException, InvalidKeyException {
 		if (singleton==null)
-			singleton=new Agent(core,keyPath,ChatColor.WHITE);
+			singleton=new Agent(core,keyPath);
 		return singleton;
 	}
 	private static boolean isJson(String fileName){
 		return fileName.endsWith(".json");
 	}
+
+	/**
+	 * Method for get key object.
+	 * @return Key object for this Agent.
+	 */
 	Key getKey() {return key;}
+
+	/**
+	 * Close this client.
+	 */
 	public void closeClient() {
 		sessionsClient.close();
 		client.shutdown();
 	}
+
+	/**
+	 * Start chatting with this agent.
+	 * @param player Player who start chatting.
+	 * @throws InvalidChatStartException Throws if this player already chatting.
+	 */
 	public void startChatting(Player player) throws InvalidChatStartException {
 		if (chattingPlayerList.contains(player)) throw new InvalidChatStartException("This player already added");
 		chattingPlayerList.add(player);
 	}
+
+	/**
+	 * Check player is chatting with this agent.
+	 * @param player Player who want to check.
+	 * @return boolean for this player is chatting.
+	 */
 	public boolean isPlayerChatting(Player player){
 		return chattingPlayerList.contains(player);
 	}
+
+	/**
+	 * Stop chatting with this agent.
+	 * @param player Player who stop chatting.
+	 * @throws InvalidChatStopException Throws if this player already doesn't chatting.
+	 */
 	public void stopChatting(Player player) throws InvalidChatStopException {
 		if (!chattingPlayerList.contains(player)) throw new InvalidChatStopException("This player already removed");
 		chattingPlayerList.remove(player);
 	}
+
+	/**
+	 * Get List of Player who are chatting with this agent.
+	 * @return List of Player who chatting.
+	 */
 	public List<Player> getPlayerChatting(){return chattingPlayerList;}
+
+	/**
+	 * Send message to this agent once.
+	 * @param player Player who send message.
+	 * @param message message that want to send.
+	 * @param isAsync send and receive by async. true can be default.
+	 */
 	public void sendMessage(Player player,String message,boolean isAsync) {
 		sendMessage(player, message, getDefaultLanguageCode(),isAsync);
 	}
+
+	/**
+	 * Send message to this agent once with special language.
+	 * @param player Player who send message.
+	 * @param message message that want to send.
+	 * @param languageCode special language code for message.
+	 * @param isAsync send and receive by async. true can be default.
+	 */
 	public void sendMessage(Player player,String message,String languageCode,boolean isAsync) {
 		QueryInput.Builder input=QueryInput.newBuilder();
 		TextInput.Builder textBuilder=TextInput.newBuilder();
@@ -116,21 +239,27 @@ public class Agent {
 		input.setText(textBuilder);
 		QueryInput query=input.build();
 
-		SessionName.Builder sessionBuilder=SessionName.newBuilder();
-		sessionBuilder.setProject(key.getCredentials().getProjectId());
-		sessionBuilder.setSession(player.getName());
-
-		MessageRequestEvent requestEvent=new MessageRequestEvent(player,sessionBuilder.build(),query,this.agent,isAsync);
+		MessageRequestEvent requestEvent=new MessageRequestEvent(player,getSession(player),query,this.agent,isAsync);
 		Bukkit.getServer().getPluginManager().callEvent(requestEvent);
 
-		DetectIntentResponse response=sessionsClient.detectIntent(sessionBuilder.build(),query);
+		DetectIntentResponse response=sessionsClient.detectIntent(getSession(player),query);
 
 		MessageResponseEvent responseEvent=new MessageResponseEvent(player,response,this.agent,isAsync);
 		Bukkit.getServer().getPluginManager().callEvent(responseEvent);
 	}
+
+	/**
+	 * Get default language code for this agent.
+	 * @return language code.
+	 */
 	public String getDefaultLanguageCode() {
 		return agent.getDefaultLanguageCode();
 	}
+
+	/**
+	 * Get List of all language code that this agent support.
+	 * @return List of language code.
+	 */
 	public java.util.List<String> getLanguageCodes(){
 		int count=agent.getSupportedLanguageCodesCount();
 		ArrayList<String> codeList=new ArrayList<>();
@@ -141,18 +270,93 @@ public class Agent {
 		}
 		return codeList;
 	}
+
+	/**
+	 * Get amount of language that this agent support.
+	 * @return amount of language
+	 */
 	public int getLanguageCodeCount() {return agent.getSupportedLanguageCodesCount()+1;}
 
+	/**
+	 * Get name of this agent.
+	 * @return agent name.
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Set name of this agent. If name is null, set to DialogFlow Agent name.
+	 * @param name agent name.
+	 */
 	public void setName(String name) {
 		if (name==null){
 			this.name=agent.getDisplayName();
 		}
 		else
 			this.name = name;
+	}
+
+	/**
+	 * Create new Session for Player.
+	 * @param player player that want to create
+	 */
+	public void createSession(Player player){
+		SessionName.Builder sessionBuilder=SessionName.newBuilder();
+		sessionBuilder.setProject(key.getCredentials().getProjectId());
+		sessionBuilder.setSession(player.getName());
+		sessions.add(sessionBuilder.build());
+
+		SessionCreatedEvent event=new SessionCreatedEvent(player,sessionBuilder.build(),this);
+		Bukkit.getServer().getPluginManager().callEvent(event);
+	}
+
+	/**
+	 * Close and remove session. If not exist, do nothing.
+	 * @param player player that want to close
+	 */
+	public void removeSession(Player player) {
+		for (int i=0;i< sessions.size();i++){
+			if (sessions.get(i).getSession().equals(player.getName()))
+			{
+				sessions.remove(i);
+
+				SessionRemovedEvent event=new SessionRemovedEvent(player,this);
+				Bukkit.getServer().getPluginManager().callEvent(event);
+				return;
+			}
+		}
+		throw new SessionNotFoundException("No session found! Check this session exist for using hasSession()");
+	}
+
+	/**
+	 * Check this agent has session.
+	 * @param player player that want to check
+	 * @return true if session exist, false if not.
+	 */
+	public boolean hasSession(Player player){
+		for (int i=0;i< sessions.size();i++){
+			if (sessions.get(i).getSession().equals(player.getName()))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Get session if exist.
+	 * @param player player that want to get
+	 * @return SessionName if session exist. if not exist, return null.
+	 */
+	protected SessionName getSession(Player player){
+		for (int i=0;i< sessions.size();i++){
+			if (sessions.get(i).getSession().equals(player.getName()))
+			{
+				return sessions.get(i);
+			}
+		}
+		throw new SessionNotFoundException("No session found! Did you create session of player first?");
 	}
 
 	class ChattingListener implements Listener {

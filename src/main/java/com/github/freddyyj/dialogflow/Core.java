@@ -1,6 +1,8 @@
 package com.github.freddyyj.dialogflow;
 
 import com.github.freddyyj.dialogflow.config.Configuration;
+import com.github.freddyyj.dialogflow.event.SessionCreatedEvent;
+import com.github.freddyyj.dialogflow.event.SessionRemovedEvent;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStartException;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStopException;
 import com.github.freddyyj.dialogflow.exception.InvalidKeyException;
@@ -12,6 +14,8 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.github.freddyyj.dialogflow.event.MessageResponseEvent;
@@ -19,10 +23,18 @@ import com.github.freddyyj.dialogflow.event.MessageResponseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * JavaPlugin for DialogFlowPlugin.
+ * @author FreddyYJ_
+ */
 public final class Core extends JavaPlugin implements Listener {
 	private Agent agent;
 	private Configuration config;
 	private boolean isEnabled=false;
+
+	/**
+	 * Override {@link JavaPlugin#onEnable()} method.
+	 */
 	@Override
 	public void onEnable() {
 		try {
@@ -47,6 +59,10 @@ public final class Core extends JavaPlugin implements Listener {
 		getLogger().info("Agent loaded: "+agent.getName());
 		super.onEnable();
 	}
+
+	/**
+	 * Override {@link JavaPlugin#onDisable()} method.
+	 */
 	@Override
 	public void onDisable() {
 		if (isEnabled){
@@ -56,6 +72,10 @@ public final class Core extends JavaPlugin implements Listener {
 
 		super.onDisable();
 	}
+
+	/**
+	 * Override {@link JavaPlugin#onCommand(CommandSender, Command, String, String[])} method.
+	 */
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (args.length==0){
@@ -121,6 +141,14 @@ public final class Core extends JavaPlugin implements Listener {
 		}
 		return false;
 	}
+
+	/**
+	 * Default listener when DialogFlow message received.
+	 * <p>
+	 *     If you want custom listener, create and register same as Spigot event listener.
+	 * </p>
+	 * @param event event MessageResponseEvent object.
+	 */
 	@EventHandler
 	public void onMessageResponse(MessageResponseEvent event){
 		if (!event.isCancelled()){
@@ -129,5 +157,44 @@ public final class Core extends JavaPlugin implements Listener {
 
 			sender.sendMessage("["+agent.color+agent.getName()+ChatColor.WHITE+"] "+response);
 		}
+	}
+
+	/**
+	 * Default listener for send message when session created
+	 */
+	@EventHandler
+	public void onSessionCreation(SessionCreatedEvent event){
+		if(!event.isCancelled()){
+			event.getPlayer().sendMessage("New Session created for Agent: "+agent.getName());
+			getLogger().info("Session created for player: "+event.getPlayer().getDisplayName());
+		}
+	}
+
+	/**
+	 * Default listener for send log when session removed
+	 */
+	@EventHandler
+	public void onSessionRemoved(SessionRemovedEvent event){
+		if(!event.isCancelled()){
+			getLogger().info("Session removed for player: "+event.getPlayer().getDisplayName());
+		}
+	}
+
+	/**
+	 * listener to handle session creation
+	 * @param event PlayerJoinEvent object
+	 */
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event){
+		agent.createSession(event.getPlayer());
+	}
+
+	/**
+	 * listener to handler session remove
+	 * @param event PlayerQuitEvent object
+	 */
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent event){
+		agent.removeSession(event.getPlayer());
 	}
 }

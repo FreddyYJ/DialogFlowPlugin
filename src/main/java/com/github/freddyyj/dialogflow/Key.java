@@ -5,14 +5,23 @@ import com.google.auth.oauth2.ServiceAccountCredentials;
 
 import java.io.*;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-
-public class Key {
+/**
+ * Class for read service key account file.
+ */
+class Key {
 	private Core core;
 	private ServiceAccountCredentials credentials;
+	/**
+	 * Default key file path.
+	 */
 	public static final String KEY_PATH="key.json";
+
+	/**
+	 * Constructor with DialogFlowPlugin core and key path.
+	 * @param core DialogFlowPlugin core
+	 * @param path path to service key account file. Use {@link #KEY_PATH}.
+	 * @throws InvalidKeyException throws when key file is invalid.
+	 */
 	public Key(Core core,String path) throws InvalidKeyException {
 		this.core=core;
 
@@ -26,6 +35,10 @@ public class Key {
 		}
 	}
 
+	/**
+	 * Get credentials.
+	 * @return credentials of agent
+	 */
 	public ServiceAccountCredentials getCredentials() {
 		return credentials;
 	}

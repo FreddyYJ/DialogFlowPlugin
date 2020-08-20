@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.github.freddyyj.dialogflow"},{"l":"com.github.freddyyj.dialogflow.config"},{"l":"com.github.freddyyj.dialogflow.event"},{"l":"com.github.freddyyj.dialogflow.exception"}]
