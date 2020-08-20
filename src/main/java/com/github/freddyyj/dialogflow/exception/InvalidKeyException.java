@@ -3,7 +3,7 @@ package com.github.freddyyj.dialogflow.exception;
 /**
  * Exception if service key account file is invalid
  */
-public class InvalidKeyException extends Exception{
+public class InvalidKeyException extends RuntimeException{
     String message;
     Throwable cause;
     public InvalidKeyException(){

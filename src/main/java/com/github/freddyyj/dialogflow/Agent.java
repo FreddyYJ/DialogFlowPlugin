@@ -14,6 +14,7 @@ import com.github.freddyyj.dialogflow.event.SessionRemovedEvent;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStartException;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStopException;
 import com.github.freddyyj.dialogflow.exception.InvalidKeyException;
+import com.github.freddyyj.dialogflow.exception.SessionNotFoundException;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.api.gax.core.GoogleCredentialsProvider;
 import com.google.api.gax.grpc.GrpcCallContext;
@@ -314,7 +315,7 @@ public class Agent {
 	 * Close and remove session. If not exist, do nothing.
 	 * @param player player that want to close
 	 */
-	public void removeSession(Player player){
+	public void removeSession(Player player) {
 		for (int i=0;i< sessions.size();i++){
 			if (sessions.get(i).getSession().equals(player.getName()))
 			{
@@ -325,6 +326,7 @@ public class Agent {
 				return;
 			}
 		}
+		throw new SessionNotFoundException("No session found! Check this session exist for using hasSession()");
 	}
 
 	/**
@@ -354,7 +356,7 @@ public class Agent {
 				return sessions.get(i);
 			}
 		}
-		return null;
+		throw new SessionNotFoundException("No session found! Did you create session of player first?");
 	}
 
 	class ChattingListener implements Listener {
