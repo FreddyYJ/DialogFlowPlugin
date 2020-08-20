@@ -6,7 +6,7 @@ DialogFlowPlugin is for accessing DialogFlow agent by Google Cloud Project servi
 2. Copy your GCP service key file in <server directory>/plugins/DialogFlowPlugin
 3. Change key file name to **key.json**
 
-In normal case, visit curseforge or dowload at [release](https://github.com/FreddyYJ/DialogFlowPlugin/releases). If you want to clone and build manually, follow it.
+In normal case, visit [curseforge](https://www.curseforge.com/minecraft/bukkit-plugins/dialogflowplugin) or dowload at [release](https://github.com/FreddyYJ/DialogFlowPlugin/releases). If you want to clone and build manually, follow it.
 1. Run ```git clone https://github.com/FreddyYJ/DialogFlowPlugin.git```
 2. Run ```mvn clean compile assembly:single```
 
