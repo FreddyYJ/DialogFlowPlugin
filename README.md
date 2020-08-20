@@ -8,9 +8,9 @@ DialogFlowPlugin is for accessing DialogFlow agent by Google Cloud Project servi
 
 In normal case, visit curseforge or dowload at release. If you want to clone and build manually, follow it.
 1. Run
-  git clone <git URI>
+    git clone <git URI>
 2. Run
-  mvn clean compile assembly:single
+    mvn clean compile assembly:single
 
 # Javadoc
 Javadoc files are in docs/. Clone or download repo and move to directory called *docs*.
