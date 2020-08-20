@@ -2,6 +2,7 @@ package com.github.freddyyj.dialogflow;
 
 import com.github.freddyyj.dialogflow.config.Configuration;
 import com.github.freddyyj.dialogflow.event.SessionCreatedEvent;
+import com.github.freddyyj.dialogflow.event.SessionRemovedEvent;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStartException;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStopException;
 import com.github.freddyyj.dialogflow.exception.InvalidKeyException;
@@ -160,12 +161,22 @@ public final class Core extends JavaPlugin implements Listener {
 
 	/**
 	 * Default listener for send message when session created
-	 * @param event
 	 */
 	@EventHandler
 	public void onSessionCreation(SessionCreatedEvent event){
 		if(!event.isCancelled()){
 			event.getPlayer().sendMessage("New Session created for Agent: "+agent.getName());
+			getLogger().info("Session created for player: "+event.getPlayer().getDisplayName());
+		}
+	}
+
+	/**
+	 * Default listener for send log when session removed
+	 */
+	@EventHandler
+	public void onSessionRemoved(SessionRemovedEvent event){
+		if(!event.isCancelled()){
+			getLogger().info("Session removed for player: "+event.getPlayer().getDisplayName());
 		}
 	}
 
