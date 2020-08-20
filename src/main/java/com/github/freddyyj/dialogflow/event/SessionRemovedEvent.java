@@ -34,7 +34,7 @@ public class SessionRemovedEvent extends Event implements Cancellable {
     public boolean isCancelled() {
         return isCancelled;
     }
-    
+
     /**
      * set this event cancelled
      */

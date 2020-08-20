@@ -9,6 +9,8 @@ import java.util.List;
 
 import com.github.freddyyj.dialogflow.event.MessageRequestEvent;
 import com.github.freddyyj.dialogflow.event.MessageResponseEvent;
+import com.github.freddyyj.dialogflow.event.SessionCreatedEvent;
+import com.github.freddyyj.dialogflow.event.SessionRemovedEvent;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStartException;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStopException;
 import com.github.freddyyj.dialogflow.exception.InvalidKeyException;
@@ -83,6 +85,9 @@ public class Agent {
 			sessionBuilder.setProject(key.getCredentials().getProjectId());
 			sessionBuilder.setSession(player.getName());
 			sessions.add(sessionBuilder.build());
+
+			SessionCreatedEvent event=new SessionCreatedEvent(player,sessionBuilder.build(),this);
+			Bukkit.getServer().getPluginManager().callEvent(event);
 		});
 
 		this.name=name;
@@ -118,6 +123,9 @@ public class Agent {
 			sessionBuilder.setProject(key.getCredentials().getProjectId());
 			sessionBuilder.setSession(player.getName());
 			sessions.add(sessionBuilder.build());
+
+			SessionCreatedEvent event=new SessionCreatedEvent(player,sessionBuilder.build(),this);
+			Bukkit.getServer().getPluginManager().callEvent(event);
 		});
 
 		this.name=agent.getDisplayName();
@@ -297,6 +305,9 @@ public class Agent {
 		sessionBuilder.setProject(key.getCredentials().getProjectId());
 		sessionBuilder.setSession(player.getName());
 		sessions.add(sessionBuilder.build());
+
+		SessionCreatedEvent event=new SessionCreatedEvent(player,sessionBuilder.build(),this);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	/**
@@ -308,6 +319,9 @@ public class Agent {
 			if (sessions.get(i).getSession().equals(player.getName()))
 			{
 				sessions.remove(i);
+
+				SessionRemovedEvent event=new SessionRemovedEvent(player,this);
+				Bukkit.getServer().getPluginManager().callEvent(event);
 				return;
 			}
 		}

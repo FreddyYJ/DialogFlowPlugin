@@ -1,6 +1,7 @@
 package com.github.freddyyj.dialogflow;
 
 import com.github.freddyyj.dialogflow.config.Configuration;
+import com.github.freddyyj.dialogflow.event.SessionCreatedEvent;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStartException;
 import com.github.freddyyj.dialogflow.exception.InvalidChatStopException;
 import com.github.freddyyj.dialogflow.exception.InvalidKeyException;
@@ -154,6 +155,17 @@ public final class Core extends JavaPlugin implements Listener {
 			String response=event.getResponse().getQueryResult().getFulfillmentText();
 
 			sender.sendMessage("["+agent.color+agent.getName()+ChatColor.WHITE+"] "+response);
+		}
+	}
+
+	/**
+	 * Default listener for send message when session created
+	 * @param event
+	 */
+	@EventHandler
+	public void onSessionCreation(SessionCreatedEvent event){
+		if(!event.isCancelled()){
+			event.getPlayer().sendMessage("New Session created for Agent: "+agent.getName());
 		}
 	}
 
