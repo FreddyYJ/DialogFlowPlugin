@@ -14,7 +14,7 @@ In normal case, visit curseforge or dowload at release. If you want to clone and
 Javadoc files are in docs/.
 1. Clone or download repo and move to directory called *docs*.
 2. Run web browser.
-3. Enter ```file://<path>/<to>/<docs>/docs/index.html```
+3. Enter ```file://<path>/<to>/<docs>/docs/index.html``` in browser URL.
 
 # Changelog
 ver 0.4.0: Beta release
