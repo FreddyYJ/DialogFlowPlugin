@@ -50,6 +50,10 @@ public class SessionCreatedEvent extends Event implements Cancellable {
     public void setCancelled(boolean cancel) {
         isCancelled=cancel;
     }
+    public static HandlerList getHandlerList(){
+        return handlerList;
+    }
+
 
     public Player getPlayer() {
         return player;

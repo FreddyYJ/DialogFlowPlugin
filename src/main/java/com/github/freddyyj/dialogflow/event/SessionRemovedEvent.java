@@ -42,6 +42,9 @@ public class SessionRemovedEvent extends Event implements Cancellable {
     public void setCancelled(boolean cancel) {
         isCancelled=cancel;
     }
+    public static HandlerList getHandlerList(){
+        return handlerList;
+    }
 
     @Override
     public HandlerList getHandlers() {
