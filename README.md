@@ -9,12 +9,7 @@ DialogFlowPlugin is for accessing DialogFlow agent by Google Cloud Project servi
 In normal case, visit [curseforge](https://www.curseforge.com/minecraft/bukkit-plugins/dialogflowplugin) or dowload at [release](https://github.com/FreddyYJ/DialogFlowPlugin/releases). If you want to clone and build manually, follow it.
 1. Run ```git clone https://github.com/FreddyYJ/DialogFlowPlugin.git```
 2. Run ```mvn clean compile assembly:single```
-
-# Javadoc
-Javadoc files are in docs/.
-1. Clone or download repo and move to directory called *docs*.
-2. Run web browser.
-3. Enter ```file://<path>/<to>/<docs>/docs/index.html``` in browser URL.
+* Javadocs: https://freddyyj.github.io/DialogFlowPlugin/
 
 # Changelog
 ver 0.4.0: Beta release
